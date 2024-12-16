@@ -242,7 +242,7 @@ const LandingPage: FC = () => {
           )}>
             <div className="relative text-center">
               <motion.h1 
-                className="font-clash text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 sm:mb-10"
+                className="font-clash text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 sm:mb-10"
                 variants={fadeInVariants}
               >
                 <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/95 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
@@ -554,7 +554,13 @@ const LandingPage: FC = () => {
                           "transition-all duration-300 ease-out",
                           "font-default text-base sm:text-lg font-semibold",
                           (!showVerification ? canVerify : canGenerate) && !isGenerating
-                            ? "bg-gradient-accent text-white hover:scale-[1.02] shadow-[0_2px_20px_rgba(30,64,175,0.3)] hover:shadow-[0_4px_24px_rgba(30,64,175,0.4)]"
+                            ? [
+                                "bg-white text-[#030711]",
+                                "hover:scale-[1.02]",
+                                "shadow-[0_0_20px_rgba(59,130,246,0.5)]",
+                                "hover:shadow-[0_0_30px_rgba(59,130,246,0.7)]",
+                                "border border-blue-200/30"
+                              ]
                             : "bg-[#1e2d44]/50 text-neutral-400 cursor-not-allowed"
                         )}
                         variants={buttonVariants}
