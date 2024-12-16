@@ -234,29 +234,29 @@ const LandingPage: FC = () => {
           )}>
             <div className="relative text-center">
               <motion.h1 
-                className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8 sm:mb-10 relative group"
+                className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8 sm:mb-10 relative group w-full flex justify-center"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.4 }}
               >
-                <div className="relative inline-flex items-center">
+                <div className="relative inline-flex items-center justify-center flex-wrap">
                   <motion.div 
-                    className="relative px-2 py-1"
+                    className="relative px-2 py-1 mx-auto"
                     whileHover={{ y: -4, rotate: 2 }}
                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-white to-neutral-100 rounded-xl transform rotate-1" />
-                    <span className="relative text-[#030711] font-black tracking-tighter">
+                    <span className="relative text-[#030711] font-black tracking-tighter whitespace-nowrap">
                       Chess
                     </span>
                   </motion.div>
                   <motion.div 
-                    className="relative -ml-1 px-2 py-1"
+                    className="relative px-2 py-1 -ml-1"
                     whileHover={{ y: -4, rotate: -2 }}
                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl transform -rotate-1" />
-                    <span className="relative text-white font-black tracking-tighter">
+                    <span className="relative text-white font-black tracking-tighter whitespace-nowrap">
                       Wrapped
                     </span>
                   </motion.div>
