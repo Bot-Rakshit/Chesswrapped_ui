@@ -223,7 +223,7 @@ const LandingPage: FC = () => {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="font-default text-base sm:text-lg md:text-xl text-neutral-300 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed px-2 text-shadow-sm"
               >
-               Your 2024 chess journey, beautifully captured. Share your stats!
+              Your 2024 chess journey, beautifully captured. Share your stats!
               </motion.p>
 
               <div className="flex flex-col items-center space-y-10 sm:space-y-12">
