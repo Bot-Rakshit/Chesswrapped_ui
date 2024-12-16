@@ -94,108 +94,80 @@ const navigationItems = [
 ];
 
 const LandingPage: FC = () => {
-  const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>([]);
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
   const [selectedYear, setSelectedYear] = useState<number>(2024);
   const [showYearSelect, setShowYearSelect] = useState(false);
-  const [usernames, setUsernames] = useState<Record<Platform, string>>({
-    'chess.com': '',
-    'lichess': ''
+  const [username, setUsername] = useState<string>('');
+  const [verificationState, setVerificationState] = useState<VerificationState>({
+    isLoading: false,
+    playerData: null
   });
-  const [verificationState, setVerificationState] = useState<Record<Platform, VerificationState>>({
-    'chess.com': { isLoading: false, playerData: null },
-    'lichess': { isLoading: false, playerData: null }
-  });
-  const [confirmedPlatforms, setConfirmedPlatforms] = useState<Platform[]>([]);
+  const [isConfirmed, setIsConfirmed] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showVerification, setShowVerification] = useState(false);
 
-  const handlePlatformToggle = (platform: Platform) => {
-    setSelectedPlatforms(prev => 
-      prev.includes(platform) 
-        ? prev.filter(p => p !== platform)
-        : [...prev, platform]
-    );
-    // Reset states when platform is deselected
-    if (verificationState[platform].playerData) {
-      setVerificationState(prev => ({ ...prev, [platform]: { isLoading: false, playerData: null } }));
+  const handlePlatformSelect = (platform: Platform) => {
+    if (selectedPlatform === platform) {
+      setSelectedPlatform(null);
+      setUsername('');
+      setVerificationState({ isLoading: false, playerData: null });
+      setIsConfirmed(false);
+      setShowVerification(false);
+    } else {
+      setSelectedPlatform(platform);
+      setUsername('');
+      setVerificationState({ isLoading: false, playerData: null });
+      setIsConfirmed(false);
+      setShowVerification(false);
     }
-    if (confirmedPlatforms.includes(platform)) {
-      setConfirmedPlatforms(prev => prev.filter(p => p !== platform));
+  };
+
+  const handleUsernameChange = (value: string) => {
+    setUsername(value);
+    if (verificationState.playerData) {
+      setVerificationState({ isLoading: false, playerData: null });
     }
+    setIsConfirmed(false);
     setShowVerification(false);
   };
 
-  const handleUsernameChange = (platform: Platform, username: string) => {
-    setUsernames(prev => ({
-      ...prev,
-      [platform]: username
-    }));
-    // Reset verification when username changes
-    if (verificationState[platform].playerData) {
-      setVerificationState(prev => ({ ...prev, [platform]: { isLoading: false, playerData: null } }));
-    }
-    if (confirmedPlatforms.includes(platform)) {
-      setConfirmedPlatforms(prev => prev.filter(p => p !== platform));
-    }
-    setShowVerification(false);
+  const handleConfirmPlayer = () => {
+    setIsConfirmed(true);
   };
 
-  const handleConfirmPlayer = (platform: Platform) => {
-    setConfirmedPlatforms(prev => [...prev, platform]);
-  };
-
-  const handleRejectPlayer = (platform: Platform) => {
-    setVerificationState(prev => ({
-      ...prev,
-      [platform]: { isLoading: false, playerData: null }
-    }));
-    setUsernames(prev => ({ ...prev, [platform]: '' }));
-    setConfirmedPlatforms(prev => prev.filter(p => p !== platform));
+  const handleRejectPlayer = () => {
+    setVerificationState({ isLoading: false, playerData: null });
+    setUsername('');
+    setIsConfirmed(false);
     setShowVerification(false);
   };
 
   const handleVerifyClick = async () => {
+    if (!selectedPlatform) return;
+    
     setIsGenerating(true);
     setShowVerification(true);
 
-    // Fetch data for all selected platforms
-    await Promise.all(
-      selectedPlatforms.map(async (platform) => {
-        const username = usernames[platform];
-        if (username.length >= PLATFORM_DATA[platform].minLength!) {
-          setVerificationState(prev => ({
-            ...prev,
-            [platform]: { ...prev[platform], isLoading: true }
-          }));
-
-          const playerData = await fetchPlayerData(username, platform);
-          
-          setVerificationState(prev => ({
-            ...prev,
-            [platform]: { isLoading: false, playerData }
-          }));
-        }
-      })
-    );
+    setVerificationState({ isLoading: true, playerData: null });
+    const playerData = await fetchPlayerData(username, selectedPlatform);
+    setVerificationState({ isLoading: false, playerData });
 
     setIsGenerating(false);
   };
 
   const handleGenerate = async () => {
+    if (!selectedPlatform) return;
     // This will be replaced with actual generation logic
-    console.log('Generating wrapped for:', confirmedPlatforms.map(p => ({
-      platform: p,
-      username: usernames[p]
-    })));
+    console.log('Generating wrapped for:', {
+      platform: selectedPlatform,
+      username: username
+    });
   };
 
-  const canVerify = selectedPlatforms.length > 0 && 
-    selectedPlatforms.every(platform => 
-      usernames[platform].length >= PLATFORM_DATA[platform].minLength!
-    );
+  const canVerify = selectedPlatform && 
+    username.length >= PLATFORM_DATA[selectedPlatform].minLength!;
 
-  const canGenerate = selectedPlatforms.length > 0 && 
-    selectedPlatforms.every(platform => confirmedPlatforms.includes(platform));
+  const canGenerate = selectedPlatform && isConfirmed;
 
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
@@ -217,15 +189,15 @@ const LandingPage: FC = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-[#030711]/90 via-[#030711]/70 to-[#030711]/90 z-20 pointer-events-none" />
 
       {/* Main Content */}
-      <div className="absolute inset-0 z-40 flex items-center justify-center px-4 sm:px-6 pointer-events-none">
+      <div className="absolute inset-0 z-40 flex items-start justify-center px-4 sm:px-6 pointer-events-none overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="w-full max-w-4xl mx-auto pointer-events-auto overflow-auto max-h-full py-4"
+          className="w-full max-w-4xl mx-auto pointer-events-auto py-8 md:py-12"
         >
           <div className={cn(
-            "relative p-8 sm:p-10 rounded-3xl",
+            "relative p-8 sm:p-10 rounded-3xl mb-24 md:mb-32",
             "border-2 border-[#1e2d44]/90 bg-[#0a101f]/90 backdrop-blur-md",
             "shadow-[0_0_30px_rgba(0,0,0,0.4)]",
             "transition-all duration-300",
@@ -279,18 +251,18 @@ const LandingPage: FC = () => {
                   className="flex flex-col items-center space-y-6"
                 >
                   <p className="text-white font-default text-sm sm:text-base font-semibold drop-shadow-sm">
-                    Select your platform(s):
+                    Select your platform:
                   </p>
                   <div className="flex items-center justify-center gap-4 sm:gap-6">
                     {(Object.keys(PLATFORM_DATA) as Platform[]).map((platform) => (
                       <motion.button
                         key={platform}
-                        onClick={() => handlePlatformToggle(platform)}
+                        onClick={() => handlePlatformSelect(platform)}
                         className={cn(
                           "group relative flex items-center gap-3 px-4 py-3 sm:px-6 sm:py-4",
                           "rounded-xl border-2 transition-all duration-200",
                           "hover:shadow-[0_0_25px_rgba(59,130,246,0.2)]",
-                          selectedPlatforms.includes(platform)
+                          selectedPlatform === platform
                             ? "border-blue-400/80 bg-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.2)]"
                             : "border-[#1e2d44] hover:border-blue-400/60 bg-[#1e2d44]/40"
                         )}
@@ -305,7 +277,7 @@ const LandingPage: FC = () => {
                         />
                         <span className={cn(
                           "font-semibold transition-colors duration-200 drop-shadow-sm",
-                          selectedPlatforms.includes(platform)
+                          selectedPlatform === platform
                             ? "text-white"
                             : "text-white/80 group-hover:text-white"
                         )}>
@@ -318,7 +290,7 @@ const LandingPage: FC = () => {
 
                 {/* Username Input Section */}
                 <AnimatePresence mode="wait">
-                  {selectedPlatforms.length > 0 && (
+                  {selectedPlatform && (
                     <motion.div
                       variants={fadeInVariants}
                       initial="hidden"
@@ -328,7 +300,7 @@ const LandingPage: FC = () => {
                     >
                       <div className="text-sm text-white font-semibold text-center mb-6 drop-shadow-sm flex items-center justify-center gap-2">
                         We'll analyze your games from January 1st, {selectedYear} onwards
-                        {confirmedPlatforms.length > 0 && (
+                        {isConfirmed && (
                           <button
                             onClick={() => setShowYearSelect(true)}
                             className="text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors duration-200 underline underline-offset-2"
@@ -396,150 +368,140 @@ const LandingPage: FC = () => {
                       </AnimatePresence>
 
                       <div className="space-y-8">
-                        {selectedPlatforms.map((platform) => (
-                          <motion.div
-                            key={platform}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="relative group"
-                          >
-                            {!confirmedPlatforms.includes(platform) && (
-                              <>
-                                <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-20">
-                                  <img 
-                                    src={PLATFORM_DATA[platform].logo} 
-                                    alt={PLATFORM_DATA[platform].name} 
-                                    className="h-6 w-auto opacity-90 group-hover:opacity-100 transition-opacity duration-200 drop-shadow-md"
-                                  />
-                                </div>
-                                <input
-                                  type="text"
-                                  placeholder={`Enter your ${PLATFORM_DATA[platform].name} username`}
-                                  value={usernames[platform]}
-                                  onChange={(e) => handleUsernameChange(platform, e.target.value)}
-                                  disabled={verificationState[platform].isLoading}
-                                  className={cn(
-                                    "w-full pl-14 pr-4 py-4 rounded-xl",
-                                    "bg-[#1e2d44]/90 backdrop-blur-sm",
-                                    "border-2 transition-all duration-300",
-                                    "text-white text-lg placeholder-white/70",
-                                    "focus:outline-none",
-                                    "font-default font-medium tracking-wide",
-                                    "relative z-10",
-                                    "disabled:opacity-50 disabled:cursor-wait",
-                                    verificationState[platform].isLoading
-                                      ? "border-blue-400/90 focus:border-blue-400"
-                                      : [
-                                          "border-blue-400/60",
-                                          "hover:border-blue-400/80",
-                                          "focus:border-blue-400",
-                                          "focus:shadow-[0_0_30px_rgba(96,165,250,0.5)]",
-                                          "hover:shadow-[0_0_25px_rgba(96,165,250,0.4)]"
-                                        ],
-                                    "drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]",
-                                    "[&::placeholder]:text-white/60",
-                                    "[&::placeholder]:font-normal",
-                                    "shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-                                  )}
-                                  maxLength={PLATFORM_DATA[platform].maxLength}
-                                  aria-label={`${PLATFORM_DATA[platform].name} username`}
+                        {!isConfirmed && (
+                          <div className="relative group">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-20">
+                              <img 
+                                src={PLATFORM_DATA[selectedPlatform].logo} 
+                                alt={PLATFORM_DATA[selectedPlatform].name} 
+                                className="h-6 w-auto opacity-90 group-hover:opacity-100 transition-opacity duration-200 drop-shadow-md"
+                              />
+                            </div>
+                            <input
+                              type="text"
+                              placeholder={`Enter your ${PLATFORM_DATA[selectedPlatform].name} username`}
+                              value={username}
+                              onChange={(e) => handleUsernameChange(e.target.value)}
+                              disabled={verificationState.isLoading}
+                              className={cn(
+                                "w-full pl-14 pr-4 py-4 rounded-xl",
+                                "bg-[#1e2d44]/90 backdrop-blur-sm",
+                                "border-2 transition-all duration-300",
+                                "text-white text-lg placeholder-white/70",
+                                "focus:outline-none",
+                                "font-default font-medium tracking-wide",
+                                "relative z-10",
+                                "disabled:opacity-50 disabled:cursor-wait",
+                                verificationState.isLoading
+                                  ? "border-blue-400/90 focus:border-blue-400"
+                                  : [
+                                      "border-blue-400/60",
+                                      "hover:border-blue-400/80",
+                                      "focus:border-blue-400",
+                                      "focus:shadow-[0_0_30px_rgba(96,165,250,0.5)]",
+                                      "hover:shadow-[0_0_25px_rgba(96,165,250,0.4)]"
+                                    ],
+                                "drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]",
+                                "[&::placeholder]:text-white/60",
+                                "[&::placeholder]:font-normal",
+                                "shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                              )}
+                              maxLength={PLATFORM_DATA[selectedPlatform].maxLength}
+                              aria-label={`${PLATFORM_DATA[selectedPlatform].name} username`}
+                            />
+                          </div>
+                        )}
+
+                        <AnimatePresence mode="wait">
+                          {verificationState.isLoading && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              className="absolute right-3 top-1/2 -translate-y-1/2"
+                            >
+                              <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                <circle 
+                                  className="opacity-25" 
+                                  cx="12" 
+                                  cy="12" 
+                                  r="10" 
+                                  stroke="currentColor" 
+                                  strokeWidth="4"
+                                  fill="none"
                                 />
-                              </>
-                            )}
+                                <path 
+                                  className="opacity-75" 
+                                  fill="currentColor" 
+                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                />
+                              </svg>
+                            </motion.div>
+                          )}
 
-                            <AnimatePresence mode="wait">
-                              {verificationState[platform].isLoading && (
-                                <motion.div
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  exit={{ opacity: 0 }}
-                                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                                >
-                                  <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                    <circle 
-                                      className="opacity-25" 
-                                      cx="12" 
-                                      cy="12" 
-                                      r="10" 
-                                      stroke="currentColor" 
-                                      strokeWidth="4"
-                                      fill="none"
-                                    />
-                                    <path 
-                                      className="opacity-75" 
-                                      fill="currentColor" 
-                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                    />
-                                  </svg>
-                                </motion.div>
-                              )}
+                          {showVerification && verificationState.playerData === null && !verificationState.isLoading && username.length > 0 && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              className="mt-3"
+                            >
+                              <PlayerCard
+                                player={null}
+                                platformLogo={PLATFORM_DATA[selectedPlatform].logo}
+                                onConfirm={handleConfirmPlayer}
+                                onReject={handleRejectPlayer}
+                                searchedUsername={username}
+                              />
+                            </motion.div>
+                          )}
 
-                              {showVerification && verificationState[platform].playerData === null && !verificationState[platform].isLoading && usernames[platform].length > 0 && (
-                                <motion.div
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, y: -10 }}
-                                  className="mt-3"
-                                >
-                                  <PlayerCard
-                                    player={null}
-                                    platformLogo={PLATFORM_DATA[platform].logo}
-                                    onConfirm={() => handleConfirmPlayer(platform)}
-                                    onReject={() => handleRejectPlayer(platform)}
-                                    searchedUsername={usernames[platform]}
-                                  />
-                                </motion.div>
-                              )}
+                          {showVerification && verificationState.playerData && !isConfirmed && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              className="mt-3"
+                            >
+                              <PlayerCard
+                                player={verificationState.playerData}
+                                platformLogo={PLATFORM_DATA[selectedPlatform].logo}
+                                onConfirm={handleConfirmPlayer}
+                                onReject={handleRejectPlayer}
+                              />
+                            </motion.div>
+                          )}
 
-                              {showVerification && verificationState[platform].playerData && !confirmedPlatforms.includes(platform) && (
-                                <motion.div
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, y: -10 }}
-                                  className="mt-3"
-                                >
-                                  <PlayerCard
-                                    player={verificationState[platform].playerData}
-                                    platformLogo={PLATFORM_DATA[platform].logo}
-                                    onConfirm={() => handleConfirmPlayer(platform)}
-                                    onReject={() => handleRejectPlayer(platform)}
-                                  />
-                                </motion.div>
-                              )}
-
-                              {confirmedPlatforms.includes(platform) && (
-                                <motion.div
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  exit={{ opacity: 0 }}
-                                  className="flex items-center gap-3 bg-[#1e2d44]/90 backdrop-blur-sm rounded-lg border-2 border-green-400/60 p-3 shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
-                                >
-                                  <Avatar
-                                    src={verificationState[platform].playerData?.avatar}
-                                    alt={verificationState[platform].playerData?.username || platform}
-                                    fallback={verificationState[platform].playerData?.username?.[0].toUpperCase() || '?'}
-                                    size="sm"
-                                  />
-                                  <div className="flex-1">
-                                    <p className="text-sm font-semibold text-white drop-shadow-sm">
-                                      {verificationState[platform].playerData?.username}
-                                    </p>
-                                    <p className="text-xs font-medium text-white/90">
-                                      Account verified
-                                    </p>
-                                  </div>
-                                  <button
-                                    onClick={() => handleRejectPlayer(platform)}
-                                    className="text-xs font-medium text-white/80 hover:text-white transition-colors duration-200"
-                                  >
-                                    Change
-                                  </button>
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
-                          </motion.div>
-                        ))}
+                          {isConfirmed && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              className="flex items-center gap-3 bg-[#1e2d44]/90 backdrop-blur-sm rounded-lg border-2 border-green-400/60 p-3 shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
+                            >
+                              <Avatar
+                                src={verificationState.playerData?.avatar}
+                                alt={verificationState.playerData?.username || selectedPlatform}
+                                fallback={verificationState.playerData?.username?.[0].toUpperCase() || '?'}
+                                size="sm"
+                              />
+                              <div className="flex-1">
+                                <p className="text-sm font-semibold text-white drop-shadow-sm">
+                                  {verificationState.playerData?.username}
+                                </p>
+                                <p className="text-xs font-medium text-white/90">
+                                  Account verified
+                                </p>
+                              </div>
+                              <button
+                                onClick={handleRejectPlayer}
+                                className="text-xs font-medium text-white/80 hover:text-white transition-colors duration-200"
+                              >
+                                Change
+                              </button>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
                     </motion.div>
                   )}
@@ -547,7 +509,7 @@ const LandingPage: FC = () => {
 
                 {/* Action Buttons */}
                 <AnimatePresence mode="wait">
-                  {selectedPlatforms.length > 0 && (
+                  {selectedPlatform && (
                     <motion.div
                       variants={fadeInVariants}
                       initial="hidden"

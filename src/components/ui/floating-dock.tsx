@@ -20,8 +20,28 @@ export const FloatingDock = ({
 }) => {
   return (
     <>
-      <FloatingDockDesktop items={items} className={desktopClassName} />
-      <MobileNavBar items={items} className={mobileClassName} />
+      {/* Dock containers */}
+      <div className="fixed z-50">
+        {/* Desktop - Vertical Dock */}
+        <div className="hidden md:block fixed right-6 lg:right-8 top-1/2 -translate-y-1/2">
+          <FloatingDockDesktop items={items} className={cn(
+            "flex-col py-3",
+            desktopClassName
+          )} />
+        </div>
+        
+        {/* Mobile - Bottom Dock */}
+        <div className="block md:hidden fixed bottom-0 left-0 right-0">
+          <div className="container mx-auto max-w-7xl px-4 pb-4">
+            <div className="flex justify-center">
+              <MobileNavBar items={items} className={cn(
+                "block md:hidden",
+                mobileClassName
+              )} />
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
@@ -36,17 +56,13 @@ const MobileNavBar = ({
   const [pathname, setPathname] = useState(window.location.pathname);
 
   useEffect(() => {
-    // Set initial pathname
     setPathname(window.location.pathname);
 
     const handleLocationChange = () => {
       setPathname(window.location.pathname);
     };
 
-    // Listen for both popstate and click events
     window.addEventListener('popstate', handleLocationChange);
-    
-    // Update pathname on initial load and subsequent changes
     handleLocationChange();
     
     return () => {
@@ -54,64 +70,54 @@ const MobileNavBar = ({
     };
   }, []);
 
-  // Helper function to check if a route is active
   const isRouteActive = (href: string): boolean => {
-    // For home route, check if pathname is exactly '/' or '/chesswrapped'
     if (href === '/') {
       return pathname === '/' || pathname === '/chesswrapped';
     }
-    // For other routes, check if pathname starts with href
     return pathname.startsWith(href);
   };
   
   return (
-    <>
-      {/* Safe area spacer */}
-      <div className="h-[4.5rem] block md:hidden" />
-      
-      {/* Bottom Navigation */}
-      <div className={cn(
-        "fixed bottom-0 left-0 right-0 z-50 block md:hidden w-full", 
-        className
-      )}>
-        <nav className="bg-[#0f172a] border-t border-[#1e293b]">
-          <div className="max-w-screen-xl mx-auto">
-            <div className="flex justify-around items-stretch">
-              {items.map((item) => {
-                const isActive = isRouteActive(item.href);
-                
-                return (
-                  <a
-                    key={item.title}
-                    href={item.href}
-                    className={cn(
-                      "flex-1 flex flex-col items-center justify-center py-3 px-2 relative",
-                      isActive ? "bg-[#1e293b]" : "hover:bg-[#1e293b]/50 active:bg-[#1e293b]/70"
-                    )}
-                  >
-                    {isActive && (
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-white rounded-full" />
-                    )}
-                    <div className={cn(
-                      "h-6 w-6 mb-1",
-                      isActive ? "text-white scale-110 transition-transform" : "text-[#94a3b8]"
-                    )}>
-                      {item.icon}
-                    </div>
-                    <span className={cn(
-                      "text-[11px] font-medium transition-colors",
-                      isActive ? "text-white" : "text-[#94a3b8]"
-                    )}>
-                      {item.title}
-                    </span>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        </nav>
-      </div>
-    </>
+    <div className={cn(
+      "w-full max-w-sm bg-[#0f172a] border-2 border-[#1e293b] rounded-2xl shadow-lg",
+      className
+    )}>
+      <nav>
+        <div className="flex justify-around items-stretch">
+          {items.map((item) => {
+            const isActive = isRouteActive(item.href);
+            
+            return (
+              <a
+                key={item.title}
+                href={item.href}
+                className={cn(
+                  "flex-1 flex flex-col items-center justify-center py-3 px-2 relative",
+                  "first:rounded-l-2xl last:rounded-r-2xl",
+                  isActive ? "bg-[#1e293b]" : "hover:bg-[#1e293b]/50 active:bg-[#1e293b]/70"
+                )}
+              >
+                {isActive && (
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-white rounded-full" />
+                )}
+                <div className={cn(
+                  "h-6 w-6 mb-1",
+                  isActive ? "text-white scale-110 transition-transform" : "text-[#94a3b8]"
+                )}>
+                  {item.icon}
+                </div>
+                <span className={cn(
+                  "text-[11px] font-medium transition-colors",
+                  isActive ? "text-white" : "text-[#94a3b8]"
+                )}>
+                  {item.title}
+                </span>
+              </a>
+            );
+          })}
+        </div>
+      </nav>
+    </div>
   );
 };
 
@@ -122,49 +128,53 @@ const FloatingDockDesktop = ({
   items: { title: string; icon: React.ReactNode; href: string }[];
   className?: string;
 }) => {
-  const mouseX = useMotionValue(Infinity);
+  const mouseY = useMotionValue(Infinity);
   return (
     <motion.div
-      onMouseMove={(e) => mouseX.set(e.pageX)}
-      onMouseLeave={() => mouseX.set(Infinity)}
+      onMouseMove={(e) => mouseY.set(e.pageY)}
+      onMouseLeave={() => mouseY.set(Infinity)}
       className={cn(
-        "mx-auto hidden md:flex h-16 gap-4 items-end rounded-2xl bg-[#1e2d44]/80 backdrop-blur-md px-4 pb-3 border-2 border-[#1e2d44] border-white/5",
+        "inline-flex gap-3",
+        "bg-[#1e293b]/95 backdrop-blur-md px-2.5",
+        "border border-white/10 rounded-2xl",
+        "shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:shadow-[0_16px_48px_rgba(0,0,0,0.5)]",
+        "transition-all duration-300",
         className
       )}
     >
       {items.map((item) => (
-        <IconContainer mouseX={mouseX} key={item.title} {...item} />
+        <IconContainer mouseY={mouseY} key={item.title} {...item} />
       ))}
     </motion.div>
   );
 };
 
 function IconContainer({
-  mouseX,
+  mouseY,
   title,
   icon,
   href,
 }: {
-  mouseX: MotionValue;
+  mouseY: MotionValue;
   title: string;
   icon: React.ReactNode;
   href: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
-  const distance = useTransform(mouseX, (val) => {
-    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-    return val - bounds.x - bounds.width / 2;
+  const distance = useTransform(mouseY, (val) => {
+    const bounds = ref.current?.getBoundingClientRect() ?? { y: 0, height: 0 };
+    return val - bounds.y - bounds.height / 2;
   });
 
-  const widthTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
-  const heightTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
+  const widthTransform = useTransform(distance, [-150, 0, 150], [44, 64, 44]);
+  const heightTransform = useTransform(distance, [-150, 0, 150], [44, 64, 44]);
 
-  const widthTransformIcon = useTransform(distance, [-150, 0, 150], [20, 40, 20]);
+  const widthTransformIcon = useTransform(distance, [-150, 0, 150], [22, 32, 22]);
   const heightTransformIcon = useTransform(
     distance,
     [-150, 0, 150],
-    [20, 40, 20]
+    [22, 32, 22]
   );
 
   const width = useSpring(widthTransform, {
@@ -192,29 +202,61 @@ function IconContainer({
   const [hovered, setHovered] = useState(false);
 
   return (
-    <a href={href}>
+    <a href={href} className="group">
       <motion.div
         ref={ref}
         style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="aspect-square rounded-full bg-[#1e2d44] hover:bg-[#2a3b56] flex items-center justify-center relative transition-colors"
+        className={cn(
+          "aspect-square rounded-xl flex items-center justify-center relative",
+          "bg-white/5 hover:bg-white/10",
+          "border border-white/5 hover:border-white/10",
+          "transition-colors duration-200 my-1.5",
+          "shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]",
+          "hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]"
+        )}
       >
         <AnimatePresence>
           {hovered && (
             <motion.div
-              initial={{ opacity: 0, y: 10, x: "-50%" }}
-              animate={{ opacity: 1, y: 0, x: "-50%" }}
-              exit={{ opacity: 0, y: 2, x: "-50%" }}
-              className="px-2 py-0.5 whitespace-pre rounded-md bg-[#1e2d44] border border-[#2a3b56] text-white absolute left-1/2 -translate-x-1/2 -top-8 w-fit text-xs"
+              initial={{ opacity: 0, x: 10, scale: 0.95 }}
+              animate={{ 
+                opacity: 1, 
+                x: 0, 
+                scale: 1,
+                transition: {
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 20
+                }
+              }}
+              exit={{ 
+                opacity: 0, 
+                x: 5, 
+                scale: 0.95,
+                transition: { duration: 0.1 }
+              }}
+              className={cn(
+                "px-3 py-1.5 whitespace-pre rounded-lg",
+                "bg-[#1e293b] backdrop-blur-md",
+                "border border-white/10",
+                "absolute left-full ml-3",
+                "shadow-[0_4px_12px_rgba(0,0,0,0.3)]",
+                "flex items-center gap-2"
+              )}
             >
-              {title}
+              <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 rotate-45 bg-[#1e293b] border-l border-b border-white/10" />
+              <span className="text-sm font-medium text-white/90">{title}</span>
             </motion.div>
           )}
         </AnimatePresence>
         <motion.div
           style={{ width: widthIcon, height: heightIcon }}
-          className="flex items-center justify-center text-white"
+          className={cn(
+            "flex items-center justify-center",
+            "text-white/75 group-hover:text-white/90 transition-colors duration-200"
+          )}
         >
           {icon}
         </motion.div>
