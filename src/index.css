@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 223 71% 4%;
+    --foreground: 210 40% 98%;
+    --accent-1: 221 83% 53%;
+    --accent-2: 217 91% 60%;
+    --accent-hover: 221 83% 63%;
+  }
+
+  body {
+    @apply bg-[#030711] text-neutral-50 antialiased;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+  }
+
+  ::selection {
+    @apply bg-white/20 text-white;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-300;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.1),
+                 0 0 40px rgba(255, 255, 255, 0.1);
+  }
+
+  .text-gradient-accent {
+    @apply bg-clip-text text-transparent bg-gradient-to-b from-white to-white/90;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.2),
+                 0 0 40px rgba(255, 255, 255, 0.1);
+  }
+
+  .text-border {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+  }
+
+  .bg-gradient-accent {
+    @apply bg-white text-[#030711];
+  }
+
+  .hover-gradient {
+    @apply bg-white/5;
+  }
+
+  .title-shadow {
+    filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.15));
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: rgb(3, 7, 17);
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-[#1e2d44] rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-[#2a3b56];
+}
+
+/* Animation Keyframes */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 3s ease-in-out infinite;
+}
