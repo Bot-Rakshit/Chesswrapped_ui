@@ -1,6 +1,5 @@
 import { type FC } from 'react';
 import { cn } from '../../utils';
-import avatarFallback from '/avatarfallback.png';
 
 interface AvatarProps {
   src?: string | null;
@@ -35,7 +34,7 @@ export const Avatar: FC<AvatarProps> = ({
     className
   );
 
-  if (!src && fallback) {
+  if (!src || fallback) {
     return (
       <div className={cn(
         rootClass,
@@ -49,7 +48,7 @@ export const Avatar: FC<AvatarProps> = ({
   return (
     <div className={rootClass}>
       <img 
-        src={src || avatarFallback} 
+        src={src} 
         alt={alt}
         className="aspect-square h-full w-full object-cover transition-transform duration-300 hover:scale-105"
       />

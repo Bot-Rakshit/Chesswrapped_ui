@@ -73,6 +73,8 @@ const buttonVariants = {
 
 const LandingPage: FC = () => {
   const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>([]);
+  const [selectedYear, setSelectedYear] = useState<number>(2024);
+  const [showYearSelect, setShowYearSelect] = useState(false);
   const [usernames, setUsernames] = useState<Record<Platform, string>>({
     'chess.com': '',
     'lichess': ''
@@ -173,6 +175,17 @@ const LandingPage: FC = () => {
   const canGenerate = selectedPlatforms.length > 0 && 
     selectedPlatforms.every(platform => confirmedPlatforms.includes(platform));
 
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year);
+    // Reset verification states when year changes
+    setVerificationState({
+      'chess.com': { isLoading: false, playerData: null },
+      'lichess': { isLoading: false, playerData: null }
+    });
+    setConfirmedPlatforms([]);
+    setShowVerification(false);
+  };
+
   return (
     <div className="relative min-h-screen bg-[#030711] overflow-hidden">
       {/* Background Boxes */}
@@ -223,7 +236,7 @@ const LandingPage: FC = () => {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="font-default text-base sm:text-lg md:text-xl text-neutral-300 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed px-2 text-shadow-sm"
               >
-              Your 2024 chess journey, beautifully captured. Share your stats!
+                Your chess journey, beautifully captured. Share your stats!
               </motion.p>
 
               <div className="flex flex-col items-center space-y-10 sm:space-y-12">
@@ -280,9 +293,75 @@ const LandingPage: FC = () => {
                       exit="exit"
                       className="w-full max-w-md"
                     >
-                      <div className="text-sm text-white font-semibold text-center mb-6 drop-shadow-sm">
-                        We'll analyze your games from January 1st, 2024 onwards
+                      <div className="text-sm text-white font-semibold text-center mb-6 drop-shadow-sm flex items-center justify-center gap-2">
+                        We'll analyze your games from January 1st, {selectedYear} onwards
+                        {confirmedPlatforms.length > 0 && (
+                          <button
+                            onClick={() => setShowYearSelect(true)}
+                            className="text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors duration-200 underline underline-offset-2"
+                          >
+                            Change
+                          </button>
+                        )}
                       </div>
+
+                      {/* Year Selection Modal */}
+                      <AnimatePresence>
+                        {showYearSelect && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                          >
+                            <motion.div
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 20 }}
+                              className={cn(
+                                "relative p-6 rounded-2xl",
+                                "border-2 border-[#1e2d44]/80 bg-[#0a101f]/95 backdrop-blur-md",
+                                "shadow-[0_0_30px_rgba(0,0,0,0.3)]",
+                                "max-w-sm w-full"
+                              )}
+                            >
+                              <div className="text-center mb-6">
+                                <h3 className="text-lg font-semibold text-white mb-2">Select Year</h3>
+                                <p className="text-sm text-neutral-400">Choose which year you want to analyze</p>
+                              </div>
+                              <div className="flex flex-col gap-3">
+                                {[2024, 2023, 2022].map((year) => (
+                                  <button
+                                    key={year}
+                                    onClick={() => {
+                                      handleYearChange(year);
+                                      setShowYearSelect(false);
+                                    }}
+                                    className={cn(
+                                      "w-full py-3 px-4 rounded-xl transition-all duration-200",
+                                      "border-2",
+                                      selectedYear === year
+                                        ? "border-blue-400/70 bg-blue-500/20 text-white"
+                                        : "border-[#1e2d44] hover:border-blue-400/50 bg-[#1e2d44]/30 text-white/80 hover:text-white"
+                                    )}
+                                  >
+                                    <span className="font-semibold">{year}</span>
+                                  </button>
+                                ))}
+                              </div>
+                              <button
+                                onClick={() => setShowYearSelect(false)}
+                                className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors duration-200"
+                              >
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
+                            </motion.div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
                       <div className="space-y-8">
                         {selectedPlatforms.map((platform) => (
                           <motion.div
