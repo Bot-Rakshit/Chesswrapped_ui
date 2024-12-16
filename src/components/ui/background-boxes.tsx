@@ -24,12 +24,8 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
         <motion.div
           key={`row-${i}`}
           className="w-full h-[calc(100%/12)] flex"
-          initial={{ opacity: 0, x: -10, rotateX: -20 }}
-          animate={{ opacity: 1, x: 0, rotateX: 0 }}
-          transition={{
-            duration: 0.5,
-            delay: i * 0.05,
-          }}
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 1 }}
         >
           {cols.map((_, j) => {
             const index = i * cols.length + j;
@@ -76,7 +72,7 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                 )}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                initial={{ opacity: 0, scale: 0.8, rotateX: -10, rotateY: -10 }}
+                initial={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0 }}
                 animate={{ 
                   opacity: 1,
                   scale: isHovered ? 1.1 : isNeighbor ? 1.05 : 1,
@@ -86,7 +82,6 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                 }}
                 transition={{
                   duration: 0.2,
-                  delay: j * 0.05,
                 }}
                 style={{
                   transformStyle: 'preserve-3d',

@@ -242,13 +242,13 @@ const LandingPage: FC = () => {
           )}>
             <div className="relative text-center">
               <motion.h1 
-                className="font-clash text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8 sm:mb-10"
+                className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8 sm:mb-10"
                 variants={fadeInVariants}
               >
-                <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/95 [text-shadow:0_0_30px_rgba(255,255,255,0.2)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]">
+                <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/95 drop-shadow-lg">
                   Chess
                 </span>
-                <span className="text-gradient-accent bg-clip-text text-transparent bg-[linear-gradient(to_bottom_right,#60a5fa,#3b82f6,#2563eb)] [text-shadow:0_0_30px_rgba(59,130,246,0.3)] drop-shadow-[0_4px_8px_rgba(30,64,175,0.5)]">
+                <span className="text-gradient-accent bg-clip-text text-transparent bg-gradient-to-br from-blue-400 to-blue-600 drop-shadow-lg">
                   Wrapped
                 </span>
               </motion.h1>

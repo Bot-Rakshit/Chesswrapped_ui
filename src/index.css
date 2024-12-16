@@ -53,12 +53,12 @@
 @layer utilities {
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400;
-    text-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
   }
 
   .text-gradient-accent {
     @apply bg-clip-text text-transparent bg-gradient-to-b from-blue-400 to-blue-600;
-    text-shadow: 0 0 30px rgba(59, 130, 246, 0.25);
+    text-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
   }
 
   .glass-effect {

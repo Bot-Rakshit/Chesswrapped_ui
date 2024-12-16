@@ -25,11 +25,16 @@ export default {
         border: {
           DEFAULT: '#1e2d44',
           hover: 'rgba(255, 255, 255, 0.3)'
-        }
+        },
+        primary: {
+          DEFAULT: '#3b82f6',
+          hover: '#2563eb',
+          foreground: '#ffffff',
+        },
       },
       fontFamily: {
-        sans: ['General Sans', 'Inter var', ...defaultTheme.fontFamily.sans],
-        display: ['Clash Display', 'General Sans'],
+        sans: ['Space Grotesk', 'Inter var', ...defaultTheme.fontFamily.sans],
+        display: ['Space Grotesk', 'Clash Display', 'General Sans'],
         mono: ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
         default: ['Inter var', ...defaultTheme.fontFamily.sans],
       },
@@ -41,7 +46,7 @@ export default {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'gradient-shine': 'linear-gradient(60deg, transparent 25%, rgba(255, 255, 255, 0.1) 50%, transparent 75%)',
+        'gradient-shine': 'linear-gradient(60deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 75%)',
       },
       animation: {
         'shine': 'shine 2s linear infinite',
