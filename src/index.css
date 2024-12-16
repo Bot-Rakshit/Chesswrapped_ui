@@ -7,11 +7,37 @@
 
 @layer base {
   :root {
-    --background: 223 71% 4%;
+    /* Core colors */
+    --background: 222 47% 4%;
     --foreground: 210 40% 98%;
-    --accent-1: 221 83% 53%;
-    --accent-2: 217 91% 60%;
-    --accent-hover: 221 83% 63%;
+
+    /* Primary colors */
+    --primary: 221 83% 53%;
+    --primary-hover: 221 83% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary colors */
+    --secondary: 217 32% 17%;
+    --secondary-hover: 217 32% 22%;
+    --secondary-foreground: 210 40% 98%;
+
+    /* Accent colors */
+    --accent: 217 91% 60%;
+    --accent-hover: 217 91% 65%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Neutral colors */
+    --neutral-50: 0 0% 100%;
+    --neutral-100: 220 14% 96%;
+    --neutral-200: 220 13% 91%;
+    --neutral-300: 216 12% 84%;
+    --neutral-400: 218 11% 65%;
+    --neutral-500: 220 9% 46%;
+    --neutral-600: 215 14% 34%;
+    --neutral-700: 217 19% 27%;
+    --neutral-800: 215 28% 17%;
+    --neutral-900: 222 47% 11%;
+    --neutral-950: 222 47% 4%;
   }
 
   body {
@@ -20,52 +46,54 @@
   }
 
   ::selection {
-    @apply bg-white/20 text-white;
+    @apply bg-blue-500/30 text-white;
   }
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-300;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.1),
-                 0 0 40px rgba(255, 255, 255, 0.1);
+    @apply bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
   }
 
   .text-gradient-accent {
-    @apply bg-clip-text text-transparent bg-gradient-to-b from-white to-white/90;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.2),
-                 0 0 40px rgba(255, 255, 255, 0.1);
+    @apply bg-clip-text text-transparent bg-gradient-to-b from-blue-400 to-blue-600;
+    text-shadow: 0 0 30px rgba(59, 130, 246, 0.25);
   }
 
-  .text-border {
-    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+  .glass-effect {
+    @apply bg-neutral-900/50 backdrop-blur-md border border-neutral-800/50;
   }
 
-  .bg-gradient-accent {
-    @apply bg-white text-[#030711];
+  .glass-effect-dark {
+    @apply bg-neutral-950/80 backdrop-blur-md border border-neutral-800/50;
   }
 
-  .hover-gradient {
-    @apply bg-white/5;
+  .glass-effect-light {
+    @apply bg-neutral-800/30 backdrop-blur-md border border-neutral-700/50;
+  }
+
+  .hover-glass {
+    @apply hover:bg-neutral-800/40 transition-colors duration-200;
   }
 
   .title-shadow {
-    filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.15));
+    filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.15));
   }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
-  background-color: rgb(3, 7, 17);
+  background-color: hsl(var(--background));
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-[#1e2d44] rounded-full;
+  @apply bg-neutral-800 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-[#2a3b56];
+  @apply bg-neutral-700;
 }
 
 /* Animation Keyframes */

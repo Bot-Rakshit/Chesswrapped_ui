@@ -13,8 +13,8 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
     <div
       className={cn(
         "absolute inset-0 w-full h-full bg-transparent flex flex-col pointer-events-auto",
-        "before:absolute before:inset-0 before:bg-gradient-to-b before:from-blue-500/10 before:via-blue-500/15 before:to-blue-600/25 before:blur-[100px] before:pointer-events-none",
-        "after:absolute after:inset-0 after:bg-gradient-to-tr after:from-blue-500/5 after:via-blue-500/10 after:to-blue-400/15 after:blur-[100px] after:pointer-events-none",
+        "before:absolute before:inset-0 before:bg-gradient-to-b before:from-blue-800/40 before:via-blue-700/30 before:to-neutral-900/50 before:blur-[100px] before:pointer-events-none",
+        "after:absolute after:inset-0 after:bg-gradient-to-tr after:from-blue-400/20 after:via-blue-300/25 after:to-blue-500/30 after:blur-[100px] after:pointer-events-none",
         "perspective-[1000px]",
         className
       )}
@@ -41,7 +41,7 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
               index + cols.length - 1, index + cols.length, index + cols.length + 1
             ];
             const isNeighbor = hoveredIndex !== null && neighborIndices.includes(hoveredIndex);
-            const depth = Math.abs(((i + j) % 3) - 1); // Creates a repeating 0,1,0 pattern for depth
+            const depth = Math.abs(((i + j) % 3) - 1);
 
             return (
               <motion.div
@@ -51,19 +51,27 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                   "transition-all duration-300 ease-out",
                   "hover:z-50",
                   "pointer-events-auto",
-                  "border-[1.5px] border-blue-500/40",
-                  "shadow-lg shadow-blue-900/20",
+                  "border-[1px]",
+                  isEvenSquare
+                    ? "border-blue-600/70"
+                    : "border-neutral-600/70",
+                  "shadow-lg",
+                  isEvenSquare
+                    ? "shadow-blue-700/40"
+                    : "shadow-neutral-700/40",
                   isEvenSquare 
                     ? depth === 0 
-                      ? "bg-blue-900/40"
-                      : "bg-blue-800/30"
+                      ? "bg-blue-700/60"
+                      : "bg-blue-600/50"
                     : depth === 0
-                      ? "bg-blue-900/30"
-                      : "bg-blue-950/20",
+                      ? "bg-neutral-700/60"
+                      : "bg-neutral-600/50",
                   isHovered 
-                    ? "scale-110 border-blue-400/70" 
+                    ? "scale-110 border-blue-400/80 shadow-blue-300/40" 
                     : isNeighbor 
-                      ? "scale-105 border-blue-500/50" 
+                      ? isEvenSquare
+                        ? "scale-105 border-blue-500/70 shadow-blue-400/30"
+                        : "scale-105 border-neutral-500/70 shadow-blue-400/30"
                       : "scale-100"
                 )}
                 onMouseEnter={() => setHoveredIndex(index)}
@@ -72,9 +80,9 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                 animate={{ 
                   opacity: 1,
                   scale: isHovered ? 1.1 : isNeighbor ? 1.05 : 1,
-                  rotateX: isHovered ? 10 : 0,
-                  rotateY: isHovered ? 10 : 0,
-                  z: isHovered ? 50 : depth * 10, // Increased depth effect
+                  rotateX: isHovered ? 8 : isNeighbor ? 4 : 0,
+                  rotateY: isHovered ? 8 : isNeighbor ? 4 : 0,
+                  z: isHovered ? 50 : isNeighbor ? 30 : depth * 10,
                 }}
                 transition={{
                   duration: 0.2,
@@ -89,21 +97,27 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                     "absolute inset-0",
                     "bg-gradient-to-br",
                     isHovered 
-                      ? isEvenSquare 
-                        ? "from-blue-400/50 via-blue-500/50 to-blue-600/60"
-                        : "from-blue-400/40 via-blue-500/40 to-blue-600/50"
-                      : depth === 0
-                        ? "from-blue-500/20 via-blue-400/25 to-blue-600/35"
-                        : "from-blue-400/15 via-blue-500/20 to-blue-600/30",
+                      ? "from-blue-300/40 via-blue-400/40 to-blue-500/50"
+                      : isEvenSquare
+                        ? depth === 0
+                          ? "from-blue-600/60 via-blue-700/70 to-blue-800/80"
+                          : "from-blue-600/50 via-blue-700/60 to-blue-800/70"
+                        : depth === 0
+                          ? "from-neutral-600/60 via-neutral-700/70 to-neutral-800/80"
+                          : "from-neutral-600/50 via-neutral-700/60 to-neutral-800/70",
                     "transition-all duration-300",
                     "pointer-events-none",
-                    "shadow-[inset_0_0_20px_rgba(59,130,246,0.3)]",
-                    "after:absolute after:inset-0 after:shadow-[0_8px_20px_rgba(59,130,246,0.4)]",
-                    "before:absolute before:inset-0 before:bg-gradient-to-br before:from-blue-400/20 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
+                    isEvenSquare
+                      ? "shadow-[inset_0_0_20px_rgba(29,78,216,0.6)]"
+                      : "shadow-[inset_0_0_20px_rgba(64,64,64,0.6)]",
+                    isEvenSquare
+                      ? "after:absolute after:inset-0 after:shadow-[0_8px_20px_rgba(29,78,216,0.7)]"
+                      : "after:absolute after:inset-0 after:shadow-[0_8px_20px_rgba(64,64,64,0.7)]",
+                    "before:absolute before:inset-0 before:bg-gradient-to-br before:from-blue-300/30 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
                     isHovered && "before:opacity-100"
                   )}
                   animate={{
-                    opacity: isHovered ? 1 : isNeighbor ? 0.9 : 0.7,
+                    opacity: isHovered ? 1 : isNeighbor ? 0.95 : 0.9,
                   }}
                 />
                 {isHovered && (
@@ -113,9 +127,9 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <div className="absolute inset-0 bg-blue-500/20 blur-xl" />
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-400/30 via-blue-500/35 to-blue-600/40" />
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-400/20 to-blue-300/30" />
+                    <div className="absolute inset-0 bg-blue-300/30 blur-xl" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-200/35 via-blue-300/40 to-blue-400/45" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-200/30 to-blue-100/35" />
                   </motion.div>
                 )}
               </motion.div>

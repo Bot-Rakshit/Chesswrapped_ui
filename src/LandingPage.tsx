@@ -8,6 +8,13 @@ import { Boxes } from './components/ui/background-boxes';
 import { PlayerCard } from './components/ui/player-card';
 import { fetchPlayerData } from './lib/mock-data';
 import { Avatar } from './components/ui/avatar';
+import { FloatingDock } from '@/components/ui/floating-dock';
+import {
+  IconHome,
+  IconBrandGithub,
+  IconBrandTwitter,
+  IconInfoCircle,
+} from '@tabler/icons-react';
 
 type Platform = 'chess.com' | 'lichess';
 
@@ -70,6 +77,29 @@ const buttonVariants = {
     transition: { duration: 0.1 }
   }
 };
+
+const navigationItems = [
+  {
+    title: "ChessWrapped",
+    icon: <IconHome className="h-full w-full text-white stroke-[1.5]" />,
+    href: "#",
+  },
+  {
+    title: "About",
+    icon: <IconInfoCircle className="h-full w-full text-white stroke-[1.5]" />,
+    href: "#about",
+  },
+  {
+    title: "GitHub",
+    icon: <IconBrandGithub className="h-full w-full text-white stroke-[1.5]" />,
+    href: "https://github.com/rakshit087/chesswrapped",
+  },
+  {
+    title: "Twitter",
+    icon: <IconBrandTwitter className="h-full w-full text-white stroke-[1.5]" />,
+    href: "https://twitter.com/rakshit087",
+  },
+];
 
 const LandingPage: FC = () => {
   const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>([]);
@@ -579,6 +609,13 @@ const LandingPage: FC = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Add Floating Dock */}
+      <FloatingDock
+        items={navigationItems}
+        mobileClassName="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"
+        desktopClassName="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"
+      />
     </div>
   );
 };
