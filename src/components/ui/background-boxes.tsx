@@ -12,8 +12,8 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
     <div
       className={cn(
         "absolute inset-0 w-full h-full bg-transparent flex flex-col pointer-events-auto",
-        "before:absolute before:inset-0 before:bg-gradient-to-b before:from-blue-800/40 before:via-blue-700/30 before:to-neutral-900/50 before:blur-[100px] before:pointer-events-none",
-        "after:absolute after:inset-0 after:bg-gradient-to-tr after:from-blue-400/20 after:via-blue-300/25 after:to-blue-500/30 after:blur-[100px] after:pointer-events-none",
+        "before:absolute before:inset-0 before:bg-gradient-to-b before:from-blue-800/50 before:via-blue-700/40 before:to-neutral-900/60 before:blur-[100px] before:pointer-events-none",
+        "after:absolute after:inset-0 after:bg-gradient-to-tr after:from-blue-400/30 after:via-blue-300/35 after:to-blue-500/40 after:blur-[100px] after:pointer-events-none",
         "perspective-[1000px]",
         className
       )}
@@ -46,25 +46,25 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                   "pointer-events-auto",
                   "border-[1px]",
                   isEvenSquare
-                    ? "border-blue-600/70"
-                    : "border-neutral-600/70",
+                    ? "border-blue-500/80"
+                    : "border-neutral-500/80",
                   "shadow-lg",
                   isEvenSquare
-                    ? "shadow-blue-700/40"
-                    : "shadow-neutral-700/40",
+                    ? "shadow-blue-600/50"
+                    : "shadow-neutral-600/50",
                   isEvenSquare 
                     ? depth === 0 
-                      ? "bg-blue-700/60"
-                      : "bg-blue-600/50"
+                      ? "bg-blue-600/70"
+                      : "bg-blue-500/60"
                     : depth === 0
-                      ? "bg-neutral-700/60"
-                      : "bg-neutral-600/50",
+                      ? "bg-neutral-600/70"
+                      : "bg-neutral-500/60",
                   isHovered 
-                    ? "scale-110 border-blue-400/80 shadow-blue-300/40" 
+                    ? "scale-110 border-blue-300/90 shadow-blue-200/50" 
                     : isNeighbor 
                       ? isEvenSquare
-                        ? "scale-105 border-blue-500/70 shadow-blue-400/30"
-                        : "scale-105 border-neutral-500/70 shadow-blue-400/30"
+                        ? "scale-105 border-blue-400/80 shadow-blue-300/40"
+                        : "scale-105 border-neutral-400/80 shadow-blue-300/40"
                       : "scale-100"
                 )}
                 onMouseEnter={() => setHoveredIndex(index)}
@@ -79,14 +79,14 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                     "absolute inset-0",
                     "bg-gradient-to-br",
                     isHovered 
-                      ? "from-blue-300/40 via-blue-400/40 to-blue-500/50"
+                      ? "from-blue-200/50 via-blue-300/50 to-blue-400/60"
                       : isEvenSquare
                         ? depth === 0
-                          ? "from-blue-600/60 via-blue-700/70 to-blue-800/80"
-                          : "from-blue-600/50 via-blue-700/60 to-blue-800/70"
+                          ? "from-blue-500/70 via-blue-600/80 to-blue-700/90"
+                          : "from-blue-500/60 via-blue-600/70 to-blue-700/80"
                         : depth === 0
-                          ? "from-neutral-600/60 via-neutral-700/70 to-neutral-800/80"
-                          : "from-neutral-600/50 via-neutral-700/60 to-neutral-800/70",
+                          ? "from-neutral-500/70 via-neutral-600/80 to-neutral-700/90"
+                          : "from-neutral-500/60 via-neutral-600/70 to-neutral-700/80",
                     "transition-all duration-300",
                     "pointer-events-none",
                     isEvenSquare

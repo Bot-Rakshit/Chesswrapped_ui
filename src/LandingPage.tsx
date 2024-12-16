@@ -226,32 +226,48 @@ const LandingPage: FC = () => {
         >
           <div className={cn(
             "relative p-8 sm:p-10 rounded-3xl",
-            "border-2 border-[#1e2d44]/80 bg-[#0a101f]/80 backdrop-blur-md",
-            "shadow-[0_0_30px_rgba(0,0,0,0.3)]",
+            "border-2 border-[#1e2d44]/90 bg-[#0a101f]/90 backdrop-blur-md",
+            "shadow-[0_0_30px_rgba(0,0,0,0.4)]",
             "transition-all duration-300",
-            "hover:shadow-[0_0_40px_rgba(0,0,0,0.4)]",
+            "hover:shadow-[0_0_40px_rgba(0,0,0,0.5)]",
             "hover:border-[#1e2d44]"
           )}>
             <div className="relative text-center">
               <motion.h1 
-                className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8 sm:mb-10"
+                className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8 sm:mb-10 relative group"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.4 }}
               >
-                <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/95 drop-shadow-lg">
-                  Chess
-                </span>
-                <span className="text-gradient-accent bg-clip-text text-transparent bg-gradient-to-br from-blue-400 to-blue-600 drop-shadow-lg">
-                  Wrapped
-                </span>
+                <div className="relative inline-flex items-center">
+                  <motion.div 
+                    className="relative px-2 py-1"
+                    whileHover={{ y: -4, rotate: 2 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white to-neutral-100 rounded-xl transform rotate-1" />
+                    <span className="relative text-[#030711] font-black tracking-tighter">
+                      Chess
+                    </span>
+                  </motion.div>
+                  <motion.div 
+                    className="relative -ml-1 px-2 py-1"
+                    whileHover={{ y: -4, rotate: -2 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl transform -rotate-1" />
+                    <span className="relative text-white font-black tracking-tighter">
+                      Wrapped
+                    </span>
+                  </motion.div>
+                </div>
               </motion.h1>
               
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="font-default text-base sm:text-lg md:text-xl text-white/90 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed px-2 [text-shadow:0_2px_4px_rgba(0,0,0,0.3)]"
+                className="font-default text-base sm:text-lg md:text-xl text-white/95 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed px-2 [text-shadow:0_2px_4px_rgba(0,0,0,0.4)]"
               >
                 Your chess journey, beautifully captured. Share your stats!
               </motion.p>
@@ -275,8 +291,8 @@ const LandingPage: FC = () => {
                           "rounded-xl border-2 transition-all duration-200",
                           "hover:shadow-[0_0_25px_rgba(59,130,246,0.2)]",
                           selectedPlatforms.includes(platform)
-                            ? "border-blue-400/70 bg-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.15)]"
-                            : "border-[#1e2d44] hover:border-blue-400/50 bg-[#1e2d44]/30"
+                            ? "border-blue-400/80 bg-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.2)]"
+                            : "border-[#1e2d44] hover:border-blue-400/60 bg-[#1e2d44]/40"
                         )}
                         variants={buttonVariants}
                         whileHover="hover"
@@ -405,21 +421,21 @@ const LandingPage: FC = () => {
                                   disabled={verificationState[platform].isLoading}
                                   className={cn(
                                     "w-full pl-14 pr-4 py-4 rounded-xl",
-                                    "bg-[#1e2d44] backdrop-blur-sm",
+                                    "bg-[#1e2d44]/90 backdrop-blur-sm",
                                     "border-2 transition-all duration-300",
-                                    "text-white text-lg placeholder-white/60",
+                                    "text-white text-lg placeholder-white/70",
                                     "focus:outline-none",
                                     "font-default font-medium tracking-wide",
                                     "relative z-10",
                                     "disabled:opacity-50 disabled:cursor-wait",
                                     verificationState[platform].isLoading
-                                      ? "border-blue-400/80 focus:border-blue-400"
+                                      ? "border-blue-400/90 focus:border-blue-400"
                                       : [
-                                          "border-blue-400/50",
-                                          "hover:border-blue-400/70",
+                                          "border-blue-400/60",
+                                          "hover:border-blue-400/80",
                                           "focus:border-blue-400",
-                                          "focus:shadow-[0_0_30px_rgba(96,165,250,0.4)]",
-                                          "hover:shadow-[0_0_25px_rgba(96,165,250,0.3)]"
+                                          "focus:shadow-[0_0_30px_rgba(96,165,250,0.5)]",
+                                          "hover:shadow-[0_0_25px_rgba(96,165,250,0.4)]"
                                         ],
                                     "drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]",
                                     "[&::placeholder]:text-white/60",
@@ -497,7 +513,7 @@ const LandingPage: FC = () => {
                                   initial={{ opacity: 0 }}
                                   animate={{ opacity: 1 }}
                                   exit={{ opacity: 0 }}
-                                  className="flex items-center gap-3 bg-[#1e2d44]/80 backdrop-blur-sm rounded-lg border-2 border-green-500/50 p-3 shadow-[0_4px_12px_rgba(0,0,0,0.3)]"
+                                  className="flex items-center gap-3 bg-[#1e2d44]/90 backdrop-blur-sm rounded-lg border-2 border-green-400/60 p-3 shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
                                 >
                                   <Avatar
                                     src={verificationState[platform].playerData?.avatar}
@@ -509,7 +525,7 @@ const LandingPage: FC = () => {
                                     <p className="text-sm font-semibold text-white drop-shadow-sm">
                                       {verificationState[platform].playerData?.username}
                                     </p>
-                                    <p className="text-xs font-medium text-white/80">
+                                    <p className="text-xs font-medium text-white/90">
                                       Account verified
                                     </p>
                                   </div>

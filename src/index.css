@@ -8,22 +8,22 @@
 @layer base {
   :root {
     /* Core colors */
-    --background: 222 47% 4%;
+    --background: 222 47% 2%;
     --foreground: 210 40% 98%;
 
     /* Primary colors */
-    --primary: 221 83% 53%;
-    --primary-hover: 221 83% 58%;
+    --primary: 221 83% 60%;
+    --primary-hover: 221 83% 65%;
     --primary-foreground: 0 0% 100%;
 
     /* Secondary colors */
-    --secondary: 217 32% 17%;
-    --secondary-hover: 217 32% 22%;
+    --secondary: 217 32% 20%;
+    --secondary-hover: 217 32% 25%;
     --secondary-foreground: 210 40% 98%;
 
     /* Accent colors */
-    --accent: 217 91% 60%;
-    --accent-hover: 217 91% 65%;
+    --accent: 217 91% 65%;
+    --accent-hover: 217 91% 70%;
     --accent-foreground: 0 0% 100%;
 
     /* Neutral colors */
@@ -31,17 +31,17 @@
     --neutral-100: 220 14% 96%;
     --neutral-200: 220 13% 91%;
     --neutral-300: 216 12% 84%;
-    --neutral-400: 218 11% 65%;
-    --neutral-500: 220 9% 46%;
-    --neutral-600: 215 14% 34%;
-    --neutral-700: 217 19% 27%;
-    --neutral-800: 215 28% 17%;
+    --neutral-400: 218 11% 70%;
+    --neutral-500: 220 9% 50%;
+    --neutral-600: 215 14% 40%;
+    --neutral-700: 217 19% 30%;
+    --neutral-800: 215 28% 20%;
     --neutral-900: 222 47% 11%;
-    --neutral-950: 222 47% 4%;
+    --neutral-950: 222 47% 2%;
   }
 
   body {
-    @apply bg-[#030711] text-neutral-50 antialiased;
+    @apply bg-[#020509] text-neutral-50 antialiased;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02";
   }
 
@@ -52,34 +52,59 @@
 
 @layer utilities {
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400;
-    text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
-  }
-
-  .text-gradient-accent {
-    @apply bg-clip-text text-transparent bg-gradient-to-b from-blue-400 to-blue-600;
-    text-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+    @apply bg-clip-text text-transparent;
   }
 
   .glass-effect {
-    @apply bg-neutral-900/50 backdrop-blur-md border border-neutral-800/50;
+    @apply bg-neutral-900/60 backdrop-blur-md border border-neutral-700/60;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 0 32px rgba(255, 255, 255, 0.05);
   }
 
   .glass-effect-dark {
-    @apply bg-neutral-950/80 backdrop-blur-md border border-neutral-800/50;
+    @apply bg-neutral-950/90 backdrop-blur-md border border-neutral-700/60;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 0 32px rgba(255, 255, 255, 0.03);
   }
 
   .glass-effect-light {
-    @apply bg-neutral-800/30 backdrop-blur-md border border-neutral-700/50;
+    @apply bg-neutral-800/40 backdrop-blur-md border border-neutral-600/60;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.2),
+      inset 0 0 32px rgba(255, 255, 255, 0.08);
   }
 
   .hover-glass {
-    @apply hover:bg-neutral-800/40 transition-colors duration-200;
+    @apply hover:bg-neutral-700/50 transition-colors duration-200;
   }
+}
 
-  .title-shadow {
-    filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.15));
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0);
   }
+  50% {
+    transform: translateY(-10px) translateX(5px) rotate(1deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-15px) scale(1.05);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce 2s ease-in-out infinite;
 }
 
 /* Custom Scrollbar */
@@ -94,44 +119,4 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-neutral-700;
-}
-
-/* Animation Keyframes */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes glow {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-pulse-slow {
-  animation: pulse 4s ease-in-out infinite;
-}
-
-.animate-glow {
-  animation: glow 3s ease-in-out infinite;
 }
