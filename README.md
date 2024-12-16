@@ -1,50 +1,82 @@
-# React + TypeScript + Vite
+# ChessWrapped 🎁♟️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ChessWrapped is a beautiful, AI-powered web application that generates personalized annual chess statistics and insights from your Chess.com and Lichess gameplay. Think Spotify Wrapped, but for chess!
 
-Currently, two official plugins are available:
+## 🚧 Work in Progress
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project is currently under development. We're using mock APIs for development purposes, but the final version will integrate with real Chess.com and Lichess APIs.
 
-## Expanding the ESLint configuration
+## ✨ Features
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Multi-Platform Support**: Analyze your games from both Chess.com and Lichess
+- **Beautiful UI**: Modern, responsive design with smooth animations and transitions
+- **AI-Powered Insights**: Leveraging Google Gemini for advanced chess analysis
+- **Real-Time Verification**: Instant username verification and profile preview
+- **Interactive Experience**: Engaging user interface with dynamic feedback
 
-- Configure the top-level `parserOptions` property like this:
+## 🛠️ Tech Stack
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- **Frontend Framework**: React with TypeScript
+- **Build Tool**: Vite
+- **Animation**: Framer Motion
+- **Styling**: Tailwind CSS
+- **AI Integration**: Google Gemini API (coming soon)
+- **API Integration**: Chess.com and Lichess APIs (coming soon)
+
+## 🚀 Getting Started
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/chesswrapped-landing.git
+cd chesswrapped-landing
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+2. Install dependencies:
+```bash
+npm install
 ```
+
+3. Start the development server:
+```bash
+npm run dev
+```
+
+4. Open [http://localhost:5173](http://localhost:5173) in your browser
+
+## 📦 Dependencies
+
+- React
+- TypeScript
+- Vite
+- Framer Motion
+- Tailwind CSS
+- Additional dependencies will be listed as the project progresses
+
+## 🎯 Roadmap
+
+- [x] Landing page design and implementation
+- [x] Platform selection and username input
+- [x] Mock API integration for development
+- [ ] Real Chess.com API integration
+- [ ] Real Lichess API integration
+- [ ] Google Gemini AI integration
+- [ ] Advanced statistics and visualizations
+- [ ] Shareable results
+
+## 🤝 Contributing
+
+This project is currently in development. Contribution guidelines will be added soon.
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- Chess.com and Lichess for their platforms and APIs
+- Google Gemini for AI capabilities
+- The chess community for inspiration
+
+---
+
+Built with ♟️ by [Your Name]
