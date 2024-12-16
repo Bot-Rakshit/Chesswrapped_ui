@@ -1,5 +1,4 @@
 import { cn } from "@/utils";
-import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
 import {
   AnimatePresence,
   MotionValue,
@@ -34,53 +33,22 @@ const FloatingDockMobile = ({
   items: { title: string; icon: React.ReactNode; href: string }[];
   className?: string;
 }) => {
-  const [open, setOpen] = useState(false);
   return (
     <div className={cn("relative block md:hidden", className)}>
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            layoutId="nav"
-            className="absolute bottom-full mb-2 inset-x-0 flex flex-row gap-3 justify-center"
+      <div className="flex flex-row gap-3 justify-center">
+        {items.map((item) => (
+          <a
+            href={item.href}
+            key={item.title}
+            className="h-12 w-12 rounded-full bg-[#1e2d44] hover:bg-[#2a3b56] flex items-center justify-center transition-colors relative group border border-white/5"
           >
-            {items.map((item, idx) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{
-                  opacity: 1,
-                  x: 0,
-                }}
-                exit={{
-                  opacity: 0,
-                  x: -10,
-                  transition: {
-                    delay: idx * 0.05,
-                  },
-                }}
-                transition={{ delay: (items.length - 1 - idx) * 0.05 }}
-              >
-                <a
-                  href={item.href}
-                  key={item.title}
-                  className="h-12 w-12 rounded-full bg-[#1e2d44] hover:bg-[#2a3b56] flex items-center justify-center transition-colors relative group"
-                >
-                  <div className="h-5 w-5 text-white">{item.icon}</div>
-                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#1e2d44] text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    {item.title}
-                  </span>
-                </a>
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <button
-        onClick={() => setOpen(!open)}
-        className="h-12 w-12 rounded-full bg-[#1e2d44] hover:bg-[#2a3b56] flex items-center justify-center transition-colors border border-white/5"
-      >
-        <IconLayoutNavbarCollapse className="h-6 w-6 text-white" />
-      </button>
+            <div className="h-5 w-5 text-white">{item.icon}</div>
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#1e2d44] text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              {item.title}
+            </span>
+          </a>
+        ))}
+      </div>
     </div>
   );
 };

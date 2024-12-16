@@ -207,13 +207,6 @@ const LandingPage: FC = () => {
 
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
-    // Reset verification states when year changes
-    setVerificationState({
-      'chess.com': { isLoading: false, playerData: null },
-      'lichess': { isLoading: false, playerData: null }
-    });
-    setConfirmedPlatforms([]);
-    setShowVerification(false);
   };
 
   return (
