@@ -50,28 +50,20 @@ interface VerificationState {
 }
 
 const fadeInVariants = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: { opacity: 0 },
   visible: { 
-    opacity: 1, 
-    y: 0,
+    opacity: 1,
     transition: {
-      duration: 0.4,
-      ease: "easeOut"
+      duration: 0.3
     }
   },
   exit: { 
     opacity: 0,
-    transition: {
-      duration: 0.2
-    }
+    duration: 0.2
   }
 };
 
 const buttonVariants = {
-  hover: { 
-    scale: 1.02,
-    transition: { duration: 0.2 }
-  },
   tap: { 
     scale: 0.98,
     transition: { duration: 0.1 }
@@ -243,7 +235,9 @@ const LandingPage: FC = () => {
             <div className="relative text-center">
               <motion.h1 
                 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8 sm:mb-10"
-                variants={fadeInVariants}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4 }}
               >
                 <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/95 drop-shadow-lg">
                   Chess

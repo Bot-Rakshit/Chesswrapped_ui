@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import React, { useState } from "react";
 import { cn } from "../../utils";
 
@@ -21,11 +20,9 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
       {...props}
     >
       {rows.map((_, i) => (
-        <motion.div
+        <div
           key={`row-${i}`}
           className="w-full h-[calc(100%/12)] flex"
-          initial={{ opacity: 1 }}
-          animate={{ opacity: 1 }}
         >
           {cols.map((_, j) => {
             const index = i * cols.length + j;
@@ -40,7 +37,7 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
             const depth = Math.abs(((i + j) % 3) - 1);
 
             return (
-              <motion.div
+              <div
                 key={`col-${j}`}
                 className={cn(
                   "w-[calc(100%/12)] h-full relative cursor-pointer",
@@ -72,22 +69,12 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                 )}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                initial={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0 }}
-                animate={{ 
-                  opacity: 1,
-                  scale: isHovered ? 1.1 : isNeighbor ? 1.05 : 1,
-                  rotateX: isHovered ? 8 : isNeighbor ? 4 : 0,
-                  rotateY: isHovered ? 8 : isNeighbor ? 4 : 0,
-                  z: isHovered ? 50 : isNeighbor ? 30 : depth * 10,
-                }}
-                transition={{
-                  duration: 0.2,
-                }}
                 style={{
-                  transformStyle: 'preserve-3d',
+                  transform: isHovered ? 'scale(1.1)' : isNeighbor ? 'scale(1.05)' : 'scale(1)',
+                  transition: 'transform 0.2s ease-out',
                 }}
               >
-                <motion.div
+                <div
                   className={cn(
                     "absolute inset-0",
                     "bg-gradient-to-br",
@@ -111,26 +98,18 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                     "before:absolute before:inset-0 before:bg-gradient-to-br before:from-blue-300/30 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
                     isHovered && "before:opacity-100"
                   )}
-                  animate={{
-                    opacity: isHovered ? 1 : isNeighbor ? 0.95 : 0.9,
-                  }}
                 />
                 {isHovered && (
-                  <motion.div
-                    className="absolute inset-0 pointer-events-none"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
+                  <div className="absolute inset-0 pointer-events-none">
                     <div className="absolute inset-0 bg-blue-300/30 blur-xl" />
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-200/35 via-blue-300/40 to-blue-400/45" />
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-200/30 to-blue-100/35" />
-                  </motion.div>
+                  </div>
                 )}
-              </motion.div>
+              </div>
             );
           })}
-        </motion.div>
+        </div>
       ))}
     </div>
   );
