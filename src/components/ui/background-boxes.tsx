@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { cn } from "../../utils";
 
 export const BoxesCore = ({ className, ...props }: { className?: string }) => {
@@ -8,13 +8,21 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
   const rows = new Array(12).fill(1);
   const cols = new Array(12).fill(1);
 
+  const handleMouseEnter = useCallback((index: number) => {
+    setHoveredIndex(index);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredIndex(null);
+  }, []);
+
   return (
     <div
       className={cn(
-        "absolute inset-0 w-full h-full bg-transparent flex flex-col pointer-events-auto",
+        "fixed inset-0 w-full h-full bg-transparent flex flex-col pointer-events-none",
         "before:absolute before:inset-0 before:bg-gradient-to-b before:from-blue-800/50 before:via-blue-700/40 before:to-neutral-900/60 before:blur-[100px] before:pointer-events-none",
         "after:absolute after:inset-0 after:bg-gradient-to-tr after:from-blue-400/30 after:via-blue-300/35 after:to-blue-500/40 after:blur-[100px] after:pointer-events-none",
-        "perspective-[1000px]",
+        "perspective-[1000px] select-none touch-none",
         className
       )}
       {...props}
@@ -40,8 +48,8 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
               <div
                 key={`col-${j}`}
                 className={cn(
-                  "w-[calc(100%/12)] h-full relative cursor-pointer",
-                  "transition-all duration-300 ease-out",
+                  "w-[calc(100%/12)] h-full relative",
+                  "transition-all duration-300 ease-out will-change-transform",
                   "hover:z-50",
                   "pointer-events-auto",
                   "border-[1px]",
@@ -67,11 +75,12 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                         : "scale-105 border-neutral-400/80 shadow-blue-300/40"
                       : "scale-100"
                 )}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave}
                 style={{
                   transform: isHovered ? 'scale(1.1)' : isNeighbor ? 'scale(1.05)' : 'scale(1)',
                   transition: 'transform 0.2s ease-out',
+                  willChange: 'transform',
                 }}
               >
                 <div
