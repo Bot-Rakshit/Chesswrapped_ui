@@ -242,13 +242,13 @@ const LandingPage: FC = () => {
           )}>
             <div className="relative text-center">
               <motion.h1 
-                className="font-clash text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 sm:mb-10"
+                className="font-clash text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8 sm:mb-10"
                 variants={fadeInVariants}
               >
-                <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/95 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
+                <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/95 [text-shadow:0_0_30px_rgba(255,255,255,0.2)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]">
                   Chess
                 </span>
-                <span className="text-gradient-accent bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-600 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
+                <span className="text-gradient-accent bg-clip-text text-transparent bg-[linear-gradient(to_bottom_right,#60a5fa,#3b82f6,#2563eb)] [text-shadow:0_0_30px_rgba(59,130,246,0.3)] drop-shadow-[0_4px_8px_rgba(30,64,175,0.5)]">
                   Wrapped
                 </span>
               </motion.h1>
@@ -257,7 +257,7 @@ const LandingPage: FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="font-default text-base sm:text-lg md:text-xl text-neutral-300 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed px-2 text-shadow-sm"
+                className="font-default text-base sm:text-lg md:text-xl text-white/90 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed px-2 [text-shadow:0_2px_4px_rgba(0,0,0,0.3)]"
               >
                 Your chess journey, beautifully captured. Share your stats!
               </motion.p>
