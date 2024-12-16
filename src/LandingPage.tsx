@@ -202,7 +202,7 @@ const LandingPage: FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen h-screen overflow-hidden bg-[#030711]">
+    <div className="relative min-h-screen bg-[#030711] overflow-hidden">
       {/* Background Boxes */}
       <div className="fixed inset-0 z-10">
         <Boxes />
@@ -217,8 +217,13 @@ const LandingPage: FC = () => {
       <div className="fixed inset-0 bg-gradient-to-b from-[#030711]/90 via-[#030711]/70 to-[#030711]/90 z-20 pointer-events-none" />
 
       {/* Main Content */}
-      <div className="relative z-40 flex flex-col items-center justify-between min-h-screen h-screen px-4 sm:px-6 py-12 pointer-events-none">
-        <div className="w-full max-w-4xl mx-auto pointer-events-auto">
+      <div className="relative z-40 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 py-12 pointer-events-none">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="w-full max-w-4xl mx-auto pointer-events-auto"
+        >
           <div className={cn(
             "relative p-8 sm:p-10 rounded-3xl",
             "border-2 border-[#1e2d44]/90 bg-[#0a101f]/90 backdrop-blur-md",
@@ -611,15 +616,15 @@ const LandingPage: FC = () => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Add Floating Dock */}
-        <FloatingDock
-          items={navigationItems}
-          mobileClassName="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto"
-          desktopClassName="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
-        />
+        </motion.div>
       </div>
+
+      {/* Add Floating Dock */}
+      <FloatingDock
+        items={navigationItems}
+        mobileClassName="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"
+        desktopClassName="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"
+      />
     </div>
   );
 };

@@ -7,7 +7,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 export const FloatingDock = ({
   items,
@@ -21,37 +21,97 @@ export const FloatingDock = ({
   return (
     <>
       <FloatingDockDesktop items={items} className={desktopClassName} />
-      <FloatingDockMobile items={items} className={mobileClassName} />
+      <MobileNavBar items={items} className={mobileClassName} />
     </>
   );
 };
 
-const FloatingDockMobile = ({
+const MobileNavBar = ({
   items,
   className,
 }: {
   items: { title: string; icon: React.ReactNode; href: string }[];
   className?: string;
 }) => {
+  const [pathname, setPathname] = useState(window.location.pathname);
+
+  useEffect(() => {
+    // Set initial pathname
+    setPathname(window.location.pathname);
+
+    const handleLocationChange = () => {
+      setPathname(window.location.pathname);
+    };
+
+    // Listen for both popstate and click events
+    window.addEventListener('popstate', handleLocationChange);
+    
+    // Update pathname on initial load and subsequent changes
+    handleLocationChange();
+    
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+    };
+  }, []);
+
+  // Helper function to check if a route is active
+  const isRouteActive = (href: string): boolean => {
+    // For home route, check if pathname is exactly '/' or '/chesswrapped'
+    if (href === '/') {
+      return pathname === '/' || pathname === '/chesswrapped';
+    }
+    // For other routes, check if pathname starts with href
+    return pathname.startsWith(href);
+  };
+  
   return (
-    <div className={cn("relative block md:hidden", className)}>
-      <div className="glass-effect-dark rounded-2xl">
-        <div className="flex flex-row items-center justify-center gap-2 px-3 py-2">
-          {items.map((item) => (
-            <a
-              href={item.href}
-              key={item.title}
-              className="flex flex-col items-center justify-center gap-1 p-2 rounded-xl hover:bg-white/5 transition-colors"
-            >
-              <div className="h-6 w-6 text-white/80">{item.icon}</div>
-              <span className="text-[10px] font-medium text-white/70">
-                {item.title}
-              </span>
-            </a>
-          ))}
-        </div>
+    <>
+      {/* Safe area spacer */}
+      <div className="h-[4.5rem] block md:hidden" />
+      
+      {/* Bottom Navigation */}
+      <div className={cn(
+        "fixed bottom-0 left-0 right-0 z-50 block md:hidden w-full", 
+        className
+      )}>
+        <nav className="bg-[#0f172a] border-t border-[#1e293b]">
+          <div className="max-w-screen-xl mx-auto">
+            <div className="flex justify-around items-stretch">
+              {items.map((item) => {
+                const isActive = isRouteActive(item.href);
+                
+                return (
+                  <a
+                    key={item.title}
+                    href={item.href}
+                    className={cn(
+                      "flex-1 flex flex-col items-center justify-center py-3 px-2 relative",
+                      isActive ? "bg-[#1e293b]" : "hover:bg-[#1e293b]/50 active:bg-[#1e293b]/70"
+                    )}
+                  >
+                    {isActive && (
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-white rounded-full" />
+                    )}
+                    <div className={cn(
+                      "h-6 w-6 mb-1",
+                      isActive ? "text-white scale-110 transition-transform" : "text-[#94a3b8]"
+                    )}>
+                      {item.icon}
+                    </div>
+                    <span className={cn(
+                      "text-[11px] font-medium transition-colors",
+                      isActive ? "text-white" : "text-[#94a3b8]"
+                    )}>
+                      {item.title}
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        </nav>
       </div>
-    </div>
+    </>
   );
 };
 
