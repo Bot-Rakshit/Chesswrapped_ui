@@ -41,19 +41,19 @@ const FloatingDockMobile = ({
         {open && (
           <motion.div
             layoutId="nav"
-            className="absolute bottom-full mb-2 inset-x-0 flex flex-col gap-2 items-center"
+            className="absolute bottom-full mb-2 inset-x-0 flex flex-row gap-3 justify-center"
           >
             {items.map((item, idx) => (
               <motion.div
                 key={item.title}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, x: -10 }}
                 animate={{
                   opacity: 1,
-                  y: 0,
+                  x: 0,
                 }}
                 exit={{
                   opacity: 0,
-                  y: 10,
+                  x: -10,
                   transition: {
                     delay: idx * 0.05,
                   },
@@ -63,9 +63,12 @@ const FloatingDockMobile = ({
                 <a
                   href={item.href}
                   key={item.title}
-                  className="h-10 w-10 rounded-full bg-[#1e2d44] hover:bg-[#2a3b56] flex items-center justify-center transition-colors"
+                  className="h-12 w-12 rounded-full bg-[#1e2d44] hover:bg-[#2a3b56] flex items-center justify-center transition-colors relative group"
                 >
-                  <div className="h-4 w-4 text-white">{item.icon}</div>
+                  <div className="h-5 w-5 text-white">{item.icon}</div>
+                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#1e2d44] text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    {item.title}
+                  </span>
                 </a>
               </motion.div>
             ))}
@@ -74,9 +77,9 @@ const FloatingDockMobile = ({
       </AnimatePresence>
       <button
         onClick={() => setOpen(!open)}
-        className="h-10 w-10 rounded-full bg-[#1e2d44] hover:bg-[#2a3b56] flex items-center justify-center transition-colors"
+        className="h-12 w-12 rounded-full bg-[#1e2d44] hover:bg-[#2a3b56] flex items-center justify-center transition-colors border border-white/5"
       >
-        <IconLayoutNavbarCollapse className="h-5 w-5 text-white" />
+        <IconLayoutNavbarCollapse className="h-6 w-6 text-white" />
       </button>
     </div>
   );
