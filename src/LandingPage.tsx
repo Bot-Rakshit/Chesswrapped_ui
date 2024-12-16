@@ -202,27 +202,27 @@ const LandingPage: FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#030711] overflow-hidden">
+    <div className="fixed inset-0 bg-[#030711] overflow-hidden">
       {/* Background Boxes */}
-      <div className="fixed inset-0 z-10">
+      <div className="absolute inset-0 z-10">
         <Boxes />
       </div>
 
-      <div className="fixed inset-0 z-30 pointer-events-none">
+      <div className="absolute inset-0 z-30 pointer-events-none">
         <div className="absolute top-0 left-1/3 -translate-x-1/2 w-1/3 aspect-square bg-gradient-to-b from-[#1e40af]/3 blur-[140px]" />
         <div className="absolute bottom-0 right-1/3 translate-x-1/2 w-1/3 aspect-square bg-gradient-to-t from-[#1e3a8a]/3 blur-[140px]" />
       </div>
 
       {/* Enhanced gradient overlay for better contrast */}
-      <div className="fixed inset-0 bg-gradient-to-b from-[#030711]/90 via-[#030711]/70 to-[#030711]/90 z-20 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#030711]/90 via-[#030711]/70 to-[#030711]/90 z-20 pointer-events-none" />
 
       {/* Main Content */}
-      <div className="relative z-40 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 py-12 pointer-events-none">
+      <div className="absolute inset-0 z-40 flex items-center justify-center px-4 sm:px-6 pointer-events-none">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="w-full max-w-4xl mx-auto pointer-events-auto"
+          className="w-full max-w-4xl mx-auto pointer-events-auto overflow-auto max-h-full py-4"
         >
           <div className={cn(
             "relative p-8 sm:p-10 rounded-3xl",
@@ -622,8 +622,8 @@ const LandingPage: FC = () => {
       {/* Add Floating Dock */}
       <FloatingDock
         items={navigationItems}
-        mobileClassName="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"
-        desktopClassName="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"
+        mobileClassName="absolute bottom-4 left-1/2 -translate-x-1/2 z-50"
+        desktopClassName="absolute bottom-4 left-1/2 -translate-x-1/2 z-50"
       />
     </div>
   );
