@@ -89,9 +89,9 @@ export const PlayerCard: FC<PlayerCardProps> = ({
       exit={{ opacity: 0, y: -10 }}
       className={cn(
         "w-full rounded-xl overflow-hidden",
-        "border-2 border-[#1e2d44]",
-        "bg-gradient-to-br from-[#1e2d44]/30 to-[#0a101f]/30",
-        "backdrop-blur-sm shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+        "border-2 border-green-500/30",
+        "bg-gradient-to-br from-green-500/10 to-[#0a101f]/30",
+        "backdrop-blur-sm shadow-[0_0_15px_rgba(34,197,94,0.1)]"
       )}
     >
       {/* Header */}
@@ -179,8 +179,8 @@ export const PlayerCard: FC<PlayerCardProps> = ({
       {/* Confirmation Section */}
       <div className={cn(
         "px-5 py-4 flex items-center gap-3",
-        "bg-gradient-to-r from-[#1e2d44]/40 to-[#0a101f]/40",
-        "border-t-2 border-[#1e2d44]"
+        "bg-gradient-to-r from-green-500/20 to-[#0a101f]/40",
+        "border-t-2 border-green-500/30"
       )}>
         <p className="text-sm text-white/70 mr-auto">Is this you?</p>
         <button
@@ -198,11 +198,11 @@ export const PlayerCard: FC<PlayerCardProps> = ({
           onClick={onConfirm}
           className={cn(
             "px-4 py-2 rounded-md text-sm font-medium",
-            "bg-blue-500 text-white/90",
-            "hover:bg-blue-600 hover:text-white",
+            "bg-green-500 text-white/90",
+            "hover:bg-green-600 hover:text-white",
             "transition-all duration-200",
-            "shadow-[0_2px_10px_rgba(59,130,246,0.3)]",
-            "hover:shadow-[0_2px_20px_rgba(59,130,246,0.4)]"
+            "shadow-[0_2px_10px_rgba(34,197,94,0.3)]",
+            "hover:shadow-[0_2px_20px_rgba(34,197,94,0.4)]"
           )}
         >
           Yes, that's me

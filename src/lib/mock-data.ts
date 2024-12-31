@@ -8,12 +8,12 @@ interface MockPlayerData {
     blitz: number | null;
     bullet: number | null;
   };
-  platformId: 'chess.com' | 'lichess';
+  platformId: 'chess.com';
   avatar?: string;
 }
 
 /** Supported chess platforms */
-const PLATFORMS = ['chess.com', 'lichess'] as const;
+const PLATFORMS = ['chess.com'] as const;
 type Platform = typeof PLATFORMS[number];
 
 /** Simulates API call delay */
@@ -42,17 +42,6 @@ const mockPlayers: Record<string, MockPlayerData> = {
       bullet: 3360
     },
     platformId: 'chess.com'
-  },
-  'drdrunkenstein': {
-    username: 'DrDrunkenstein',
-    name: 'Magnus Carlsen',
-    countryCode: 'NO',
-    ratings: {
-      rapid: 2876,
-      blitz: 3186,
-      bullet: 3342
-    },
-    platformId: 'lichess'
   }
 };
 

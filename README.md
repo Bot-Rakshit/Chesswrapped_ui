@@ -1,14 +1,14 @@
 # ChessWrapped 🎁♟️
 
-ChessWrapped is a beautiful, AI-powered web application that generates personalized annual chess statistics and insights from your Chess.com and Lichess gameplay. Think Spotify Wrapped, but for chess!
+ChessWrapped is a beautiful, AI-powered web application that generates personalized annual chess statistics and insights from your Chess.com gameplay. Think Spotify Wrapped, but for chess!
 
 ## 🚧 Work in Progress
 
-This project is currently under development. We're using mock APIs for development purposes, but the final version will integrate with real Chess.com and Lichess APIs.
+This project is currently under development. We're using mock APIs for development purposes, but the final version will integrate with the Chess.com API.
 
 ## ✨ Features
 
-- **Multi-Platform Support**: Analyze your games from both Chess.com and Lichess
+- **Chess.com Integration**: Analyze your games from Chess.com
 - **Beautiful UI**: Modern, responsive design with smooth animations and transitions
 - **AI-Powered Insights**: Leveraging Google Gemini for advanced chess analysis
 - **Real-Time Verification**: Instant username verification and profile preview
@@ -21,7 +21,7 @@ This project is currently under development. We're using mock APIs for developme
 - **Animation**: Framer Motion
 - **Styling**: Tailwind CSS
 - **AI Integration**: Google Gemini API (coming soon)
-- **API Integration**: Chess.com and Lichess APIs (coming soon)
+- **API Integration**: Chess.com API (coming soon)
 
 ## 🚀 Getting Started
 
@@ -58,7 +58,6 @@ npm run dev
 - [x] Platform selection and username input
 - [x] Mock API integration for development
 - [ ] Real Chess.com API integration
-- [ ] Real Lichess API integration
 - [ ] Google Gemini AI integration
 - [ ] Advanced statistics and visualizations
 - [ ] Shareable results
@@ -73,7 +72,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-- Chess.com and Lichess for their platforms and APIs
+- Chess.com for their platform and API
 - Google Gemini for AI capabilities
 - The chess community for inspiration
 

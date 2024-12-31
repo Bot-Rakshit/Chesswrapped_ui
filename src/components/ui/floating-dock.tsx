@@ -79,7 +79,10 @@ const MobileNavBar = ({
   
   return (
     <div className={cn(
-      "w-full max-w-sm bg-[#0f172a] border-2 border-[#1e293b] rounded-2xl shadow-lg",
+      "w-full max-w-sm bg-gradient-to-b from-[#0a101f]/98 to-[#030711]/95 backdrop-blur-xl",
+      "border-2 border-green-400/30 rounded-2xl",
+      "shadow-[0_0_30px_rgba(34,197,94,0.15)]",
+      "transition-all duration-300",
       className
     )}>
       <nav>
@@ -94,21 +97,32 @@ const MobileNavBar = ({
                 className={cn(
                   "flex-1 flex flex-col items-center justify-center py-3 px-2 relative",
                   "first:rounded-l-2xl last:rounded-r-2xl",
-                  isActive ? "bg-[#1e293b]" : "hover:bg-[#1e293b]/50 active:bg-[#1e293b]/70"
+                  "transition-all duration-300",
+                  isActive 
+                    ? "bg-gradient-to-b from-green-500/20 to-green-400/10" 
+                    : "hover:bg-green-500/10 active:bg-green-500/20"
                 )}
               >
                 {isActive && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-white rounded-full" />
+                  <motion.div 
+                    layoutId="activeIndicator"
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-green-400 to-green-500 rounded-full"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
                 )}
                 <div className={cn(
-                  "h-6 w-6 mb-1",
-                  isActive ? "text-white scale-110 transition-transform" : "text-[#94a3b8]"
+                  "h-6 w-6 mb-1 transition-all duration-300",
+                  isActive 
+                    ? "text-green-400 scale-110" 
+                    : "text-white/60 hover:text-white/80"
                 )}>
                   {item.icon}
                 </div>
                 <span className={cn(
-                  "text-[11px] font-medium transition-colors",
-                  isActive ? "text-white" : "text-[#94a3b8]"
+                  "text-[11px] font-medium transition-colors duration-300",
+                  isActive 
+                    ? "text-green-400" 
+                    : "text-white/60 hover:text-white/80"
                 )}>
                   {item.title}
                 </span>
@@ -135,9 +149,11 @@ const FloatingDockDesktop = ({
       onMouseLeave={() => mouseY.set(Infinity)}
       className={cn(
         "inline-flex gap-3",
-        "bg-[#1e293b]/95 backdrop-blur-md px-2.5",
-        "border border-white/10 rounded-2xl",
-        "shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:shadow-[0_16px_48px_rgba(0,0,0,0.5)]",
+        "bg-gradient-to-b from-[#0a101f]/98 to-[#030711]/95 backdrop-blur-xl px-2.5",
+        "border-2 border-green-400/30 rounded-2xl",
+        "shadow-[0_0_30px_rgba(34,197,94,0.15)]",
+        "hover:shadow-[0_0_40px_rgba(34,197,94,0.2)]",
+        "hover:border-green-400/40",
         "transition-all duration-300",
         className
       )}
@@ -169,35 +185,13 @@ function IconContainer({
 
   const widthTransform = useTransform(distance, [-150, 0, 150], [44, 64, 44]);
   const heightTransform = useTransform(distance, [-150, 0, 150], [44, 64, 44]);
-
   const widthTransformIcon = useTransform(distance, [-150, 0, 150], [22, 32, 22]);
-  const heightTransformIcon = useTransform(
-    distance,
-    [-150, 0, 150],
-    [22, 32, 22]
-  );
+  const heightTransformIcon = useTransform(distance, [-150, 0, 150], [22, 32, 22]);
 
-  const width = useSpring(widthTransform, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-  const height = useSpring(heightTransform, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-
-  const widthIcon = useSpring(widthTransformIcon, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-  const heightIcon = useSpring(heightTransformIcon, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
+  const width = useSpring(widthTransform, { mass: 0.1, stiffness: 150, damping: 12 });
+  const height = useSpring(heightTransform, { mass: 0.1, stiffness: 150, damping: 12 });
+  const widthIcon = useSpring(widthTransformIcon, { mass: 0.1, stiffness: 150, damping: 12 });
+  const heightIcon = useSpring(heightTransformIcon, { mass: 0.1, stiffness: 150, damping: 12 });
 
   const [hovered, setHovered] = useState(false);
 
@@ -210,8 +204,8 @@ function IconContainer({
         onMouseLeave={() => setHovered(false)}
         className={cn(
           "aspect-square rounded-xl flex items-center justify-center relative",
-          "bg-white/5 hover:bg-white/10",
-          "border border-white/5 hover:border-white/10",
+          "bg-green-500/10 hover:bg-green-500/20",
+          "border border-green-400/20 hover:border-green-400/30",
           "transition-colors duration-200 my-1.5",
           "shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]",
           "hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]"
@@ -239,15 +233,15 @@ function IconContainer({
               }}
               className={cn(
                 "px-3 py-1.5 whitespace-pre rounded-lg",
-                "bg-[#1e293b] backdrop-blur-md",
-                "border border-white/10",
+                "bg-gradient-to-b from-[#0a101f]/98 to-[#030711]/95 backdrop-blur-xl",
+                "border-2 border-green-400/30",
                 "absolute left-full ml-3",
-                "shadow-[0_4px_12px_rgba(0,0,0,0.3)]",
+                "shadow-[0_0_20px_rgba(34,197,94,0.15)]",
                 "flex items-center gap-2"
               )}
             >
-              <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 rotate-45 bg-[#1e293b] border-l border-b border-white/10" />
-              <span className="text-sm font-medium text-white/90">{title}</span>
+              <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 rotate-45 bg-[#0a101f] border-l border-b border-green-400/30" />
+              <span className="text-sm font-medium text-green-400">{title}</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -255,7 +249,7 @@ function IconContainer({
           style={{ width: widthIcon, height: heightIcon }}
           className={cn(
             "flex items-center justify-center",
-            "text-white/75 group-hover:text-white/90 transition-colors duration-200"
+            "text-white/60 group-hover:text-green-400 transition-colors duration-200"
           )}
         >
           {icon}
