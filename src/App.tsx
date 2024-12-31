@@ -1,28 +1,10 @@
-import { type FC, useEffect } from 'react';
-import LandingPage from './LandingPage';
+import { type FC } from 'react';
+import LandingPage from '@/features/landing/LandingPage';
 
 const App: FC = () => {
-  useEffect(() => {
-    // Prevent scrolling at the app level
-    document.documentElement.style.overflow = 'hidden';
-    document.documentElement.style.height = '100vh';
-    document.body.style.overflow = 'hidden';
-    document.body.style.height = '100vh';
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-    
-    return () => {
-      // Cleanup
-      document.documentElement.style.overflow = '';
-      document.documentElement.style.height = '';
-      document.body.style.overflow = '';
-      document.body.style.height = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-    };
-  }, []);
-
-  return <LandingPage />;
+  return (
+    <LandingPage />
+  );
 };
 
 export default App;

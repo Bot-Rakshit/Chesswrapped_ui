@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+  }
+
+  html {
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  body {
+    overflow: hidden;
+    height: 100vh;
+    position: fixed;
+    width: 100%;
+  }
+}
+
+@layer utilities {
+  .glass-effect {
+    @apply backdrop-blur-md bg-opacity-20;
+  }
+} 
