@@ -79,10 +79,11 @@ const MobileNavBar = ({
   
   return (
     <div className={cn(
-      "w-full max-w-sm bg-gradient-to-b from-[#0a101f]/98 to-[#030711]/95 backdrop-blur-xl",
-      "border-2 border-green-400/30 rounded-2xl",
-      "shadow-[0_0_30px_rgba(34,197,94,0.15)]",
+      "w-full max-w-sm bg-gradient-to-b from-[#0a1628]/98 to-[#030711]/95 backdrop-blur-xl",
+      "border-2 border-blue-500/30 rounded-2xl",
+      "shadow-[0_0_30px_rgba(59,130,246,0.15)]",
       "transition-all duration-300",
+      "fixed bottom-4 left-1/2 -translate-x-1/2",
       className
     )}>
       <nav>
@@ -99,21 +100,21 @@ const MobileNavBar = ({
                   "first:rounded-l-2xl last:rounded-r-2xl",
                   "transition-all duration-300",
                   isActive 
-                    ? "bg-gradient-to-b from-green-500/20 to-green-400/10" 
-                    : "hover:bg-green-500/10 active:bg-green-500/20"
+                    ? "bg-gradient-to-b from-blue-500/20 to-blue-400/10" 
+                    : "hover:bg-blue-500/10 active:bg-blue-500/20"
                 )}
               >
                 {isActive && (
                   <motion.div 
                     layoutId="activeIndicator"
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-green-400 to-green-500 rounded-full"
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
                 <div className={cn(
                   "h-6 w-6 mb-1 transition-all duration-300",
                   isActive 
-                    ? "text-green-400 scale-110" 
+                    ? "text-blue-400 scale-110" 
                     : "text-white/60 hover:text-white/80"
                 )}>
                   {item.icon}
@@ -121,7 +122,7 @@ const MobileNavBar = ({
                 <span className={cn(
                   "text-[11px] font-medium transition-colors duration-300",
                   isActive 
-                    ? "text-green-400" 
+                    ? "text-blue-400" 
                     : "text-white/60 hover:text-white/80"
                 )}>
                   {item.title}
@@ -149,11 +150,11 @@ const FloatingDockDesktop = ({
       onMouseLeave={() => mouseY.set(Infinity)}
       className={cn(
         "inline-flex gap-3",
-        "bg-gradient-to-b from-[#0a101f]/98 to-[#030711]/95 backdrop-blur-xl px-2.5",
-        "border-2 border-green-400/30 rounded-2xl",
-        "shadow-[0_0_30px_rgba(34,197,94,0.15)]",
-        "hover:shadow-[0_0_40px_rgba(34,197,94,0.2)]",
-        "hover:border-green-400/40",
+        "bg-gradient-to-b from-[#0a1628]/98 to-[#030711]/95 backdrop-blur-xl px-2.5",
+        "border-2 border-blue-500/30 rounded-2xl",
+        "shadow-[0_0_30px_rgba(59,130,246,0.15)]",
+        "hover:shadow-[0_0_40px_rgba(59,130,246,0.2)]",
+        "hover:border-blue-500/40",
         "transition-all duration-300",
         className
       )}
@@ -204,8 +205,8 @@ function IconContainer({
         onMouseLeave={() => setHovered(false)}
         className={cn(
           "aspect-square rounded-xl flex items-center justify-center relative",
-          "bg-green-500/10 hover:bg-green-500/20",
-          "border border-green-400/20 hover:border-green-400/30",
+          "bg-blue-500/10 hover:bg-blue-500/20",
+          "border border-blue-400/20 hover:border-blue-400/30",
           "transition-colors duration-200 my-1.5",
           "shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]",
           "hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]"
@@ -233,15 +234,15 @@ function IconContainer({
               }}
               className={cn(
                 "px-3 py-1.5 whitespace-pre rounded-lg",
-                "bg-gradient-to-b from-[#0a101f]/98 to-[#030711]/95 backdrop-blur-xl",
-                "border-2 border-green-400/30",
+                "bg-gradient-to-b from-[#0a1628]/98 to-[#030711]/95 backdrop-blur-xl",
+                "border-2 border-blue-500/30",
                 "absolute left-full ml-3",
-                "shadow-[0_0_20px_rgba(34,197,94,0.15)]",
+                "shadow-[0_0_20px_rgba(59,130,246,0.15)]",
                 "flex items-center gap-2"
               )}
             >
-              <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 rotate-45 bg-[#0a101f] border-l border-b border-green-400/30" />
-              <span className="text-sm font-medium text-green-400">{title}</span>
+              <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 rotate-45 bg-[#0a1628] border-l border-b border-blue-500/30" />
+              <span className="text-sm font-medium text-blue-400">{title}</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -249,7 +250,7 @@ function IconContainer({
           style={{ width: widthIcon, height: heightIcon }}
           className={cn(
             "flex items-center justify-center",
-            "text-white/60 group-hover:text-green-400 transition-colors duration-200"
+            "text-white/60 group-hover:text-blue-400 transition-colors duration-200"
           )}
         >
           {icon}

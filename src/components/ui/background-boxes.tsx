@@ -20,8 +20,8 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
     <div
       className={cn(
         "absolute inset-0 w-full h-full bg-transparent flex flex-col pointer-events-none overflow-hidden",
-        "before:fixed before:inset-0 before:bg-gradient-to-b before:from-green-500/50 before:via-green-400/40 before:to-neutral-900/60 before:blur-[100px] before:pointer-events-none",
-        "after:fixed after:inset-0 after:bg-gradient-to-tr after:from-green-400/30 after:via-white/35 after:to-emerald-400/40 after:blur-[100px] after:pointer-events-none",
+        "before:fixed before:inset-0 before:bg-gradient-to-b before:from-blue-900/50 before:via-blue-800/30 before:to-white/20 before:blur-[100px] before:pointer-events-none",
+        "after:fixed after:inset-0 after:bg-gradient-to-tr after:from-white/20 after:via-blue-500/20 after:to-white/20 after:blur-[100px] after:pointer-events-none",
         "perspective-[1000px] select-none touch-none",
         className
       )}
@@ -55,25 +55,25 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                     "pointer-events-auto",
                     "border-[1px]",
                     isEvenSquare
-                      ? "border-green-400/80"
+                      ? "border-blue-400/80"
                       : "border-white/80",
                     "shadow-lg",
                     isEvenSquare
-                      ? "shadow-green-500/50"
-                      : "shadow-white/50",
+                      ? "shadow-blue-500/30"
+                      : "shadow-white/30",
                     isEvenSquare 
                       ? depth === 0 
-                        ? "bg-green-500/70"
-                        : "bg-green-400/60"
+                        ? "bg-blue-500/70"
+                        : "bg-blue-400/60"
                       : depth === 0
                         ? "bg-white/70"
                         : "bg-white/60",
                     isHovered 
-                      ? "scale-110 border-green-200/90 shadow-green-100/50" 
+                      ? "scale-110 border-white/90 shadow-white/50" 
                       : isNeighbor 
                         ? isEvenSquare
-                          ? "scale-105 border-green-300/80 shadow-green-200/40"
-                          : "scale-105 border-white/80 shadow-green-200/40"
+                          ? "scale-105 border-blue-300/90 shadow-blue-200/50"
+                          : "scale-105 border-white/90 shadow-white/50"
                         : "scale-100"
                   )}
                   onMouseEnter={() => handleMouseEnter(index)}
@@ -89,31 +89,31 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                       "absolute inset-0",
                       "bg-gradient-to-br",
                       isHovered 
-                        ? "from-green-100/50 via-white/50 to-green-300/60"
+                        ? "from-white/50 via-blue-300/50 to-white/50"
                         : isEvenSquare
                           ? depth === 0
-                            ? "from-green-400/70 via-green-500/80 to-green-600/90"
-                            : "from-green-400/60 via-green-500/70 to-green-600/80"
+                            ? "from-blue-400/90 via-blue-500/90 to-blue-600/90"
+                            : "from-blue-400/80 via-blue-500/80 to-blue-600/80"
                           : depth === 0
-                            ? "from-white/70 via-white/80 to-neutral-100/90"
-                            : "from-white/60 via-white/70 to-neutral-100/80",
+                            ? "from-white/90 via-white/90 to-blue-50/90"
+                            : "from-white/80 via-white/80 to-blue-50/80",
                       "transition-all duration-300",
                       "pointer-events-none",
                       isEvenSquare
-                        ? "shadow-[inset_0_0_20px_rgba(34,197,94,0.6)]"
-                        : "shadow-[inset_0_0_20px_rgba(255,255,255,0.6)]",
+                        ? "shadow-[inset_0_0_20px_rgba(59,130,246,0.7)]"
+                        : "shadow-[inset_0_0_20px_rgba(255,255,255,0.7)]",
                       isEvenSquare
-                        ? "after:absolute after:inset-0 after:shadow-[0_8px_20px_rgba(34,197,94,0.7)]"
-                        : "after:absolute after:inset-0 after:shadow-[0_8px_20px_rgba(255,255,255,0.7)]",
-                      "before:absolute before:inset-0 before:bg-gradient-to-br before:from-green-200/30 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
+                        ? "after:absolute after:inset-0 after:shadow-[0_8px_20px_rgba(59,130,246,0.8)]"
+                        : "after:absolute after:inset-0 after:shadow-[0_8px_20px_rgba(255,255,255,0.8)]",
+                      "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/30 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
                       isHovered && "before:opacity-100"
                     )}
                   />
                   {isHovered && (
                     <div className="absolute inset-0 pointer-events-none">
-                      <div className="absolute inset-0 bg-green-200/30 blur-xl" />
-                      <div className="absolute inset-0 bg-gradient-to-br from-green-100/35 via-white/40 to-green-300/45" />
-                      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-green-100/30 to-white/35" />
+                      <div className="absolute inset-0 bg-white/30 blur-xl" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-300/40 via-white/40 to-blue-300/40" />
+                      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-white/30" />
                     </div>
                   )}
                 </div>

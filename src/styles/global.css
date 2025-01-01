@@ -1,11 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 222.2 84% 4.9%;
+    /* Core colors */
+    --background: 217 71% 8%;
     --foreground: 210 40% 98%;
+
+    /* Primary colors - Blue */
+    --primary: 217 91% 60%;
+    --primary-hover: 217 91% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary colors - White */
+    --secondary: 0 0% 100%;
+    --secondary-hover: 217 91% 97%;
+    --secondary-foreground: 217 71% 8%;
+
+    /* Accent colors */
+    --accent: 217 91% 60%;
+    --accent-hover: 0 0% 100%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Neutral colors */
+    --neutral-50: 210 40% 98%;
+    --neutral-100: 220 20% 96%;
+    --neutral-200: 220 20% 91%;
+    --neutral-300: 220 20% 84%;
+    --neutral-400: 220 20% 70%;
+    --neutral-500: 220 20% 50%;
+    --neutral-600: 220 20% 40%;
+    --neutral-700: 220 20% 30%;
+    --neutral-800: 220 30% 20%;
+    --neutral-900: 220 40% 11%;
+    --neutral-950: 217 71% 8%;
   }
 
   html {
@@ -14,15 +46,97 @@
   }
 
   body {
-    overflow: hidden;
-    height: 100vh;
-    position: fixed;
-    width: 100%;
+    @apply bg-[#0a1628] text-neutral-50 antialiased overflow-hidden fixed w-full h-screen;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+  }
+
+  ::selection {
+    @apply bg-sky-400/30 text-white;
   }
 }
 
 @layer utilities {
-  .glass-effect {
-    @apply backdrop-blur-md bg-opacity-20;
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-white to-blue-500;
   }
+
+  .glass-effect {
+    @apply bg-blue-950/60 backdrop-blur-md border border-blue-400/40;
+    box-shadow: 
+      0 8px 32px rgba(59, 130, 246, 0.2),
+      inset 0 0 32px rgba(59, 130, 246, 0.1);
+  }
+
+  .glass-effect-dark {
+    @apply bg-blue-950/90 backdrop-blur-md border border-blue-500/40;
+    box-shadow: 
+      0 8px 32px rgba(59, 130, 246, 0.3),
+      inset 0 0 32px rgba(59, 130, 246, 0.05);
+  }
+
+  .glass-effect-light {
+    @apply bg-blue-900/40 backdrop-blur-md border border-white/40;
+    box-shadow: 
+      0 8px 32px rgba(255, 255, 255, 0.15),
+      inset 0 0 32px rgba(255, 255, 255, 0.15);
+  }
+
+  .hover-glass {
+    @apply hover:bg-blue-500/20 transition-colors duration-200;
+  }
+
+  .neon-glow {
+    text-shadow: 
+      0 0 10px rgba(59, 130, 246, 0.8),
+      0 0 20px rgba(59, 130, 246, 0.4),
+      0 0 30px rgba(59, 130, 246, 0.2);
+  }
+
+  .neon-border {
+    box-shadow:
+      0 0 5px rgba(59, 130, 246, 0.5),
+      0 0 10px rgba(59, 130, 246, 0.3),
+      inset 0 0 5px rgba(59, 130, 246, 0.5),
+      inset 0 0 10px rgba(59, 130, 246, 0.3);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0);
+  }
+  50% {
+    transform: translateY(-10px) translateX(5px) rotate(1deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-15px) scale(1.05);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-sky-900 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-sky-800;
 } 
