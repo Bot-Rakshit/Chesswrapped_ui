@@ -273,10 +273,11 @@ const LandingPage: FC = () => {
                           className="mt-6"
                         >
                           <PlayerCard
-                            username={username}
+                            player={null}
                             platformLogo={chesscomLogo}
                             onConfirm={handleConfirmPlayer}
                             onReject={handleRejectPlayer}
+                            searchedUsername={username}
                           />
                         </motion.div>
                       )}
