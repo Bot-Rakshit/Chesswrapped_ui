@@ -102,9 +102,9 @@ const PlayerCard: FC<PlayerCardProps> = ({
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full h-32 rounded-xl bg-[#0a101f]/95 border-2 border-green-500/30 flex items-center justify-center"
+        className="w-full h-32 rounded-xl bg-[#0a101f]/95 border-2 border-blue-400/40 flex items-center justify-center"
       >
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
       </motion.div>
     );
   }
@@ -147,7 +147,7 @@ const PlayerCard: FC<PlayerCardProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full rounded-xl overflow-hidden border-2 border-green-500/30 bg-gradient-to-br from-green-500/10 to-[#0a101f]/30 backdrop-blur-sm"
+      className="w-full rounded-xl overflow-hidden border-2 border-blue-400/40 bg-gradient-to-br from-blue-500/10 to-[#0a101f]/30 backdrop-blur-sm"
     >
       <div className="p-5">
         <div className="flex items-start gap-5">
@@ -157,7 +157,7 @@ const PlayerCard: FC<PlayerCardProps> = ({
               alt={player.username}
               size="lg"
             />
-            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#0a101f] border border-[#1e2d44] flex items-center justify-center">
+            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#0a101f] border border-blue-400/40 flex items-center justify-center">
               <img 
                 src={platformLogo} 
                 alt="Platform Logo"
@@ -191,9 +191,9 @@ const PlayerCard: FC<PlayerCardProps> = ({
             
             <div className="flex flex-wrap items-center gap-2.5">
               {player.ratings.rapid !== null && (
-                <div className="px-3 py-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2">
-                  <span className="text-emerald-300/80 text-xs font-medium">Rapid</span>
-                  <span className="text-emerald-400 font-semibold text-sm">{player.ratings.rapid}</span>
+                <div className="px-3 py-1.5 rounded-md bg-blue-500/10 border border-blue-500/30 flex items-center gap-2">
+                  <span className="text-blue-300/80 text-xs font-medium">Rapid</span>
+                  <span className="text-blue-400 font-semibold text-sm">{player.ratings.rapid}</span>
                 </div>
               )}
               {player.ratings.blitz !== null && (
@@ -203,9 +203,9 @@ const PlayerCard: FC<PlayerCardProps> = ({
                 </div>
               )}
               {player.ratings.bullet !== null && (
-                <div className="px-3 py-1.5 rounded-md bg-purple-500/10 border border-purple-500/30 flex items-center gap-2">
-                  <span className="text-purple-300/80 text-xs font-medium">Bullet</span>
-                  <span className="text-purple-400 font-semibold text-sm">{player.ratings.bullet}</span>
+                <div className="px-3 py-1.5 rounded-md bg-blue-500/10 border border-blue-500/30 flex items-center gap-2">
+                  <span className="text-blue-300/80 text-xs font-medium">Bullet</span>
+                  <span className="text-blue-400 font-semibold text-sm">{player.ratings.bullet}</span>
                 </div>
               )}
             </div>
@@ -213,7 +213,7 @@ const PlayerCard: FC<PlayerCardProps> = ({
         </div>
       </div>
       
-      <div className="px-5 py-4 flex items-center justify-end gap-3 bg-gradient-to-r from-green-500/5 to-[#0a101f]/20 border-t border-green-500/20">
+      <div className="px-5 py-4 flex items-center justify-end gap-3 bg-gradient-to-r from-blue-500/5 to-[#0a101f]/20 border-t border-blue-400/20">
         <button
           onClick={onReject}
           className="px-4 py-2 rounded-md text-sm font-medium bg-red-500/20 text-red-300 hover:bg-red-500/30 hover:text-red-200 transition-all duration-200"
@@ -222,7 +222,7 @@ const PlayerCard: FC<PlayerCardProps> = ({
         </button>
         <button
           onClick={onConfirm}
-          className="px-4 py-2 rounded-md text-sm font-medium bg-green-500/20 text-green-300 hover:bg-green-500/30 hover:text-green-200 transition-all duration-200"
+          className="px-4 py-2 rounded-md text-sm font-medium bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 hover:text-blue-200 transition-all duration-200"
         >
           Confirm
         </button>
