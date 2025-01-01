@@ -34,7 +34,7 @@ export const Avatar: FC<AvatarProps> = ({
     className
   );
 
-  if (!src || fallback) {
+  if (!src) {
     return (
       <div className={cn(
         rootClass,

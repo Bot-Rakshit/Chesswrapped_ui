@@ -4,13 +4,14 @@ import { cn } from '@/utils';
 import geminiIcon from '/google-gemini-icon.svg';
 import chesscomLogo from '/chesscom_logo_pawn_negative.svg';
 import { Boxes } from '@/components/ui/background-boxes';
-import { PlayerCard } from '@/components/ui/player-card';
-import { fetchPlayerData } from '@/lib/mock-data';
+import PlayerCard from '@/components/ui/player-card';
+import { ChessService } from '@/services/chess.service';
+import { APIError } from '@/lib/axios';
 import { Avatar } from '@/components/ui/avatar';
 import { FloatingDock } from '@/components/ui/floating-dock';
 import { navigationItems } from '@/constants/navigation';
 import { fadeInVariants, buttonVariants } from '@/constants/animations';
-import { VerificationState } from '@/types';
+import type { VerificationState } from '@/types/domain.types';
 
 const LandingPage: FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -20,6 +21,7 @@ const LandingPage: FC = () => {
   });
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [showVerification, setShowVerification] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleUsernameChange = (value: string) => {
     setUsername(value);
@@ -28,6 +30,7 @@ const LandingPage: FC = () => {
     }
     setIsConfirmed(false);
     setShowVerification(false);
+    setError(null);
   };
 
   const handleConfirmPlayer = () => {
@@ -39,14 +42,34 @@ const LandingPage: FC = () => {
     setUsername('');
     setIsConfirmed(false);
     setShowVerification(false);
+    setError(null);
   };
 
   const handleVerifyClick = async () => {
     setShowVerification(true);
     setVerificationState({ isLoading: true, playerData: null });
+    setError(null);
     
-    const playerData = await fetchPlayerData(username, 'chess.com');
-    setVerificationState({ isLoading: false, playerData });
+    try {
+      const playerData = await ChessService.verifyUser(username);
+      setVerificationState({ isLoading: false, playerData });
+    } catch (err) {
+      if (err instanceof APIError) {
+        switch (err.code) {
+          case 'UNAUTHORIZED':
+            setError('API key is invalid or missing');
+            break;
+          case 'NETWORK_ERROR':
+            setError('Failed to connect to the server');
+            break;
+          default:
+            setError('An unexpected error occurred');
+        }
+      } else {
+        setError('An unexpected error occurred');
+      }
+      setVerificationState({ isLoading: false, playerData: null });
+    }
   };
 
   const handleGenerate = async () => {
@@ -220,6 +243,17 @@ const LandingPage: FC = () => {
                     )}
 
                     <AnimatePresence mode="wait">
+                      {error && !verificationState.isLoading && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="text-red-400 text-sm font-medium text-center"
+                        >
+                          {error}
+                        </motion.div>
+                      )}
+
                       {showVerification && verificationState.playerData === null && !verificationState.isLoading && username.length > 0 && (
                         <motion.div
                           initial={{ opacity: 0, y: 10 }}

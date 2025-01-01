@@ -4,8 +4,7 @@ import { cn } from './utils';
 import geminiIcon from '/google-gemini-icon.svg';
 import chesscomLogo from '/chesscom_logo_pawn_negative.svg';
 import { Boxes } from './components/ui/background-boxes';
-import { PlayerCard } from './components/ui/player-card';
-import { fetchPlayerData } from './lib/mock-data';
+import PlayerCard from './components/ui/player-card';
 import { Avatar } from './components/ui/avatar';
 import { FloatingDock } from '@/components/ui/floating-dock';
 import {
@@ -14,11 +13,6 @@ import {
   IconBrandTwitter,
   IconInfoCircle,
 } from '@tabler/icons-react';
-
-interface VerificationState {
-  isLoading: boolean;
-  playerData: Awaited<ReturnType<typeof fetchPlayerData>>;
-}
 
 const fadeInVariants = {
   hidden: { opacity: 0 },
@@ -66,50 +60,48 @@ const navigationItems = [
 
 const LandingPage: FC = () => {
   const [username, setUsername] = useState<string>('');
-  const [verificationState, setVerificationState] = useState<VerificationState>({
-    isLoading: false,
-    playerData: null
-  });
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showVerification, setShowVerification] = useState(false);
 
-  const handleUsernameChange = (value: string) => {
-    setUsername(value);
-    if (verificationState.playerData) {
-      setVerificationState({ isLoading: false, playerData: null });
-    }
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(event.target.value);
     setIsConfirmed(false);
     setShowVerification(false);
   };
 
   const handleConfirmPlayer = () => {
     setIsConfirmed(true);
+    setShowVerification(true);
   };
 
   const handleRejectPlayer = () => {
-    setVerificationState({ isLoading: false, playerData: null });
     setUsername('');
     setIsConfirmed(false);
     setShowVerification(false);
   };
 
-  const handleVerifyClick = async () => {
-    setIsGenerating(true);
-    setShowVerification(true);
-
-    setVerificationState({ isLoading: true, playerData: null });
-    const playerData = await fetchPlayerData(username, 'chess.com');
-    setVerificationState({ isLoading: false, playerData });
-
-    setIsGenerating(false);
+  const handleVerifyClick = () => {
+    if (username.length >= 3) {
+      setShowVerification(true);
+    }
   };
 
   const handleGenerate = async () => {
-    // This will be replaced with actual generation logic
-    console.log('Generating wrapped for:', {
-      username: username
-    });
+    if (!isConfirmed) return;
+    
+    setIsGenerating(true);
+    try {
+      // This will be replaced with actual generation logic
+      console.log('Generating wrapped for:', {
+        username: username
+      });
+      // Add your generation logic here
+    } catch (error) {
+      console.error('Error generating wrapped:', error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -214,8 +206,8 @@ const LandingPage: FC = () => {
                           type="text"
                           placeholder="Enter your Chess.com username"
                           value={username}
-                          onChange={(e) => handleUsernameChange(e.target.value)}
-                          disabled={verificationState.isLoading}
+                          onChange={handleUsernameChange}
+                          disabled={isGenerating}
                           className={cn(
                             "w-full pl-14 pr-4 py-4 rounded-xl",
                             "bg-[#0a101f]/95 backdrop-blur-sm",
@@ -225,7 +217,7 @@ const LandingPage: FC = () => {
                             "font-default font-medium tracking-wide",
                             "relative z-10",
                             "disabled:opacity-50 disabled:cursor-wait",
-                            verificationState.isLoading
+                            isGenerating
                               ? "border-green-400/90 focus:border-green-400"
                               : [
                                   "border-green-400/40",
@@ -247,7 +239,7 @@ const LandingPage: FC = () => {
                     )}
 
                     <AnimatePresence mode="wait">
-                      {verificationState.isLoading && (
+                      {isGenerating && (
                         <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
@@ -273,7 +265,7 @@ const LandingPage: FC = () => {
                         </motion.div>
                       )}
 
-                      {showVerification && verificationState.playerData === null && !verificationState.isLoading && username.length > 0 && (
+                      {showVerification && !isConfirmed && (
                         <motion.div
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -281,24 +273,7 @@ const LandingPage: FC = () => {
                           className="mt-6"
                         >
                           <PlayerCard
-                            player={null}
-                            platformLogo={chesscomLogo}
-                            onConfirm={handleConfirmPlayer}
-                            onReject={handleRejectPlayer}
-                            searchedUsername={username}
-                          />
-                        </motion.div>
-                      )}
-
-                      {showVerification && verificationState.playerData && !isConfirmed && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className="mt-6"
-                        >
-                          <PlayerCard
-                            player={verificationState.playerData}
+                            username={username}
                             platformLogo={chesscomLogo}
                             onConfirm={handleConfirmPlayer}
                             onReject={handleRejectPlayer}
@@ -315,9 +290,9 @@ const LandingPage: FC = () => {
                         >
                           <div className="relative">
                             <Avatar
-                              src={verificationState.playerData?.avatar}
-                              alt={verificationState.playerData?.username || 'Chess.com'}
-                              fallback={verificationState.playerData?.username?.[0].toUpperCase() || '?'}
+                              src={undefined}
+                              alt={username}
+                              fallback={username[0].toUpperCase()}
                               size="sm"
                             />
                             <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-[#0a101f] flex items-center justify-center">
@@ -328,7 +303,7 @@ const LandingPage: FC = () => {
                           </div>
                           <div className="flex-1">
                             <p className="text-sm font-semibold text-white drop-shadow-sm">
-                              {verificationState.playerData?.username}
+                              {username}
                             </p>
                             <p className="text-xs font-medium text-green-400/90">
                               Account verified

@@ -1,48 +1,120 @@
-import { type FC } from 'react';
+import { type FC, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '../../utils';
 import { Avatar } from './avatar';
+import { verifyChessUser } from '@/lib/api';
+import type { PlayerData } from '@/types';
 
-interface PlayerInfo {
-  username: string;
-  name: string | null;
+interface CountryFlagProps {
   countryCode: string;
-  ratings: {
-    rapid: number | null;
-    blitz: number | null;
-    bullet: number | null;
-  };
-  platformId: 'chess.com' | 'lichess';
-  avatar?: string;
+  variant?: 'emoji' | 'cdn' | 'icon';
+  size?: 'sm' | 'md' | 'lg';
 }
 
+const CountryFlag: FC<CountryFlagProps> = ({ countryCode, variant = 'cdn', size = 'sm' }) => {
+  const sizeMap = {
+    sm: 'h-4',
+    md: 'h-5',
+    lg: 'h-6'
+  };
+
+  if (!countryCode) return null;
+
+  const getFlagUrl = (code: string) => `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
+
+  switch (variant) {
+    case 'emoji':
+      return (
+        <span className="text-lg">
+          {countryCode.toUpperCase().replace(/./g, char => 
+            String.fromCodePoint(char.charCodeAt(0) + 127397)
+          )}
+        </span>
+      );
+    case 'cdn':
+    default:
+      return (
+        <img
+          src={getFlagUrl(countryCode)}
+          alt={`Flag of ${countryCode}`}
+          className={cn(
+            sizeMap[size],
+            "w-auto flex-shrink-0 shadow-sm rounded-sm"
+          )}
+        />
+      );
+  }
+};
+
 interface PlayerCardProps {
-  player?: PlayerInfo | null;
+  player: PlayerData | null;
+  platformLogo: string;
   onConfirm: () => void;
   onReject: () => void;
-  platformLogo: string;
   searchedUsername?: string;
 }
 
-export const PlayerCard: FC<PlayerCardProps> = ({
+const PlayerCard: FC<PlayerCardProps> = ({
   player,
+  platformLogo,
   onConfirm,
   onReject,
-  platformLogo,
-  searchedUsername
+  searchedUsername,
 }) => {
-  if (!player) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPlayerData = async () => {
+      if (!searchedUsername) return;
+      
+      console.log('Fetching data for username:', searchedUsername);
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        console.log('Making API call...');
+        const response = await verifyChessUser(searchedUsername);
+        console.log('Raw API Response:', response);
+        
+        if (response.success && response.data) {
+          console.log('Setting player data:', response.data);
+          setError(null);
+        } else {
+          console.log('API returned error:', response.error);
+          setError(response.error || 'Failed to fetch player data');
+        }
+      } catch (err) {
+        console.error('API call failed:', err);
+        setError('Failed to fetch player data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (searchedUsername) {
+      fetchPlayerData();
+    }
+  }, [searchedUsername]);
+
+  if (isLoading) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        className={cn(
-          "w-full rounded-xl overflow-hidden",
-          "border-2 border-red-500/30",
-          "bg-gradient-to-br from-red-500/10 to-[#0a101f]/30",
-          "backdrop-blur-sm shadow-[0_0_15px_rgba(255,255,255,0.05)]"
-        )}
+        className="w-full h-32 rounded-xl bg-[#0a101f]/95 border-2 border-green-500/30 flex items-center justify-center"
+      >
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+      </motion.div>
+    );
+  }
+
+  if (error && !player) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full rounded-xl overflow-hidden border-2 border-red-500/30 bg-gradient-to-br from-red-500/10 to-[#0a101f]/30 backdrop-blur-sm"
       >
         <div className="p-5 flex items-center gap-4">
           <div className="h-16 w-16 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">
@@ -53,27 +125,14 @@ export const PlayerCard: FC<PlayerCardProps> = ({
           <div>
             <h3 className="text-lg font-semibold text-white mb-1">Player Not Found</h3>
             <p className="text-sm text-neutral-400">
-              {searchedUsername ? (
-                <>No player found with username <span className="text-red-400">{searchedUsername}</span></>
-              ) : (
-                'Please check the username and try again'
-              )}
+              {error || `No player found with username ${searchedUsername}`}
             </p>
           </div>
         </div>
-        <div className={cn(
-          "px-5 py-4 flex items-center justify-end",
-          "bg-gradient-to-r from-red-500/5 to-[#0a101f]/20",
-          "border-t border-red-500/20"
-        )}>
+        <div className="px-5 py-4 flex items-center justify-end bg-gradient-to-r from-red-500/5 to-[#0a101f]/20 border-t border-red-500/20">
           <button
             onClick={onReject}
-            className={cn(
-              "px-4 py-2 rounded-md text-sm font-medium",
-              "bg-red-500/20 text-red-300",
-              "hover:bg-red-500/30 hover:text-red-200",
-              "transition-all duration-200 shadow-[0_0_10px_rgba(239,68,68,0.1)]"
-            )}
+            className="px-4 py-2 rounded-md text-sm font-medium bg-red-500/20 text-red-300 hover:bg-red-500/30 hover:text-red-200 transition-all duration-200"
           >
             Try Again
           </button>
@@ -82,132 +141,94 @@ export const PlayerCard: FC<PlayerCardProps> = ({
     );
   }
 
+  if (!player) return null;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      className={cn(
-        "w-full rounded-xl overflow-hidden",
-        "border-2 border-green-500/30",
-        "bg-gradient-to-br from-green-500/10 to-[#0a101f]/30",
-        "backdrop-blur-sm shadow-[0_0_15px_rgba(34,197,94,0.1)]"
-      )}
+      className="w-full rounded-xl overflow-hidden border-2 border-green-500/30 bg-gradient-to-br from-green-500/10 to-[#0a101f]/30 backdrop-blur-sm"
     >
-      {/* Header */}
       <div className="p-5">
         <div className="flex items-start gap-5">
-          {/* Avatar and Platform */}
           <div className="relative">
             <Avatar
               src={player.avatar}
               alt={player.username}
               size="lg"
             />
-            <div 
-              className={cn(
-                "absolute -bottom-1 -right-1",
-                "w-6 h-6 rounded-full",
-                "bg-[#0a101f]",
-                "border border-[#1e2d44]",
-                "flex items-center justify-center",
-                "shadow-lg",
-                "ring-2 ring-[#4361ee]/20"
-              )}
-            >
+            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#0a101f] border border-[#1e2d44] flex items-center justify-center">
               <img 
                 src={platformLogo} 
-                alt={player.platformId}
+                alt="Platform Logo"
                 className="w-4 h-4 object-contain"
               />
             </div>
           </div>
 
-          {/* Player Info */}
           <div className="flex-1 min-w-0">
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-white/90 flex items-center gap-2 mb-0.5">
-                <span className="truncate">{player.username}</span>
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <h3 className="text-lg font-semibold text-white/90">
+                    {player.username}
+                  </h3>
+                  {player.name && (
+                    <p className="text-sm text-white/70">
+                      {player.name}
+                    </p>
+                  )}
+                </div>
                 {player.countryCode && (
-                  <img
-                    src={`https://flagcdn.com/w20/${player.countryCode.toLowerCase()}.png`}
-                    alt={player.countryCode}
-                    className="h-5 w-auto flex-shrink-0 shadow-sm"
+                  <CountryFlag 
+                    countryCode={player.countryCode} 
+                    variant="cdn"
+                    size="md"
                   />
                 )}
-              </h3>
-              {player.name && (
-                <p className="text-sm text-white/70 truncate">{player.name}</p>
-              )}
+              </div>
             </div>
+            
             <div className="flex flex-wrap items-center gap-2.5">
-              {player.ratings.rapid && (
-                <div className={cn(
-                  "px-3 py-1.5 rounded-md",
-                  "bg-emerald-500/10 border border-emerald-500/30",
-                  "flex items-center gap-2 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
-                )}>
+              {player.ratings.rapid !== null && (
+                <div className="px-3 py-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2">
                   <span className="text-emerald-300/80 text-xs font-medium">Rapid</span>
-                  <span className="text-emerald-400 font-semibold text-sm tabular-nums">{player.ratings.rapid}</span>
+                  <span className="text-emerald-400 font-semibold text-sm">{player.ratings.rapid}</span>
                 </div>
               )}
-              {player.ratings.blitz && (
-                <div className={cn(
-                  "px-3 py-1.5 rounded-md",
-                  "bg-blue-500/10 border border-blue-500/30",
-                  "flex items-center gap-2 shadow-[0_0_10px_rgba(59,130,246,0.1)]"
-                )}>
+              {player.ratings.blitz !== null && (
+                <div className="px-3 py-1.5 rounded-md bg-blue-500/10 border border-blue-500/30 flex items-center gap-2">
                   <span className="text-blue-300/80 text-xs font-medium">Blitz</span>
-                  <span className="text-blue-400 font-semibold text-sm tabular-nums">{player.ratings.blitz}</span>
+                  <span className="text-blue-400 font-semibold text-sm">{player.ratings.blitz}</span>
                 </div>
               )}
-              {player.ratings.bullet && (
-                <div className={cn(
-                  "px-3 py-1.5 rounded-md",
-                  "bg-purple-500/10 border border-purple-500/30",
-                  "flex items-center gap-2 shadow-[0_0_10px_rgba(168,85,247,0.1)]"
-                )}>
+              {player.ratings.bullet !== null && (
+                <div className="px-3 py-1.5 rounded-md bg-purple-500/10 border border-purple-500/30 flex items-center gap-2">
                   <span className="text-purple-300/80 text-xs font-medium">Bullet</span>
-                  <span className="text-purple-400 font-semibold text-sm tabular-nums">{player.ratings.bullet}</span>
+                  <span className="text-purple-400 font-semibold text-sm">{player.ratings.bullet}</span>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
-
-      {/* Confirmation Section */}
-      <div className={cn(
-        "px-5 py-4 flex items-center gap-3",
-        "bg-gradient-to-r from-green-500/20 to-[#0a101f]/40",
-        "border-t-2 border-green-500/30"
-      )}>
-        <p className="text-sm text-white/70 mr-auto">Is this you?</p>
+      
+      <div className="px-5 py-4 flex items-center justify-end gap-3 bg-gradient-to-r from-green-500/5 to-[#0a101f]/20 border-t border-green-500/20">
         <button
           onClick={onReject}
-          className={cn(
-            "px-4 py-2 rounded-md text-sm font-medium",
-            "bg-red-500/10 border border-red-500/30 text-red-300",
-            "hover:bg-red-500/20 hover:border-red-500/40 hover:text-red-200",
-            "transition-all duration-200 shadow-[0_0_10px_rgba(239,68,68,0.1)]"
-          )}
+          className="px-4 py-2 rounded-md text-sm font-medium bg-red-500/20 text-red-300 hover:bg-red-500/30 hover:text-red-200 transition-all duration-200"
         >
-          Not me
+          Cancel
         </button>
         <button
           onClick={onConfirm}
-          className={cn(
-            "px-4 py-2 rounded-md text-sm font-medium",
-            "bg-green-500 text-white/90",
-            "hover:bg-green-600 hover:text-white",
-            "transition-all duration-200",
-            "shadow-[0_2px_10px_rgba(34,197,94,0.3)]",
-            "hover:shadow-[0_2px_20px_rgba(34,197,94,0.4)]"
-          )}
+          className="px-4 py-2 rounded-md text-sm font-medium bg-green-500/20 text-green-300 hover:bg-green-500/30 hover:text-green-200 transition-all duration-200"
         >
-          Yes, that's me
+          Confirm
         </button>
       </div>
     </motion.div>
   );
-}; 
+};
+
+export default PlayerCard; 
