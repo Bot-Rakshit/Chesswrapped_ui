@@ -266,6 +266,14 @@ const ShareMenu: React.FC<{
   );
 };
 
+// Add CSS for capture mode
+const captureStyles = `
+  .capture-mode .hide-in-capture {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+`;
+
 export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) => {
   const [loading, setLoading] = useState(true);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -278,16 +286,36 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
     if (!cardRef.current) return null;
     
     try {
+      // Add capture mode class before capturing
+      cardRef.current.classList.add('capture-mode');
+      
       const canvas = await html2canvas(cardRef.current, {
         backgroundColor: null,
         scale: 2, // Higher quality
+        width: 1080, // Instagram story width
+        height: 1920, // Instagram story height
       });
+      
+      // Remove capture mode class after capturing
+      cardRef.current.classList.remove('capture-mode');
+      
       return canvas.toDataURL('image/png');
     } catch (err) {
       console.error('Error capturing card:', err);
+      cardRef.current?.classList.remove('capture-mode');
       return null;
     }
   };
+
+  // Add styles to document head
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = captureStyles;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
 
   // Handle close
   const handleClose = (e: React.MouseEvent) => {
@@ -523,7 +551,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
     <div className="fixed inset-0 bg-black z-[100] flex items-center justify-center">
       <div className="relative flex items-center h-full">
         {/* Previous button - outside for larger screens */}
-        <div className="hidden md:block mr-8">
+        <div className="hidden md:block mr-8 hide-in-capture">
           <button
             onClick={handlePrevious}
             className={cn(
@@ -544,7 +572,11 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
         <div 
           ref={cardRef}
           className="w-full h-full md:w-[375px] md:h-[667px] md:rounded-[40px] md:shadow-2xl relative bg-black overflow-hidden"
-          style={{ height: '100dvh' }} // Use dynamic viewport height for mobile
+          style={{ 
+            height: '100dvh',
+            aspectRatio: '9/16',
+            maxHeight: 'calc(100vw * 16/9)'
+          }}
         >
           {/* Story Container */}
           <div 
@@ -594,7 +626,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                   </div>
 
                   {/* Navigation buttons - only visible on mobile */}
-                  <div className="md:hidden absolute inset-x-0 top-0 h-full flex items-center justify-between px-4 pointer-events-none">
+                  <div className="md:hidden absolute inset-x-0 top-0 h-full flex items-center justify-between px-4 pointer-events-none hide-in-capture">
                     <button
                       onClick={handlePrevious}
                       className={cn(
@@ -624,7 +656,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                   </div>
 
                   {/* Progress bar */}
-                  <div className="absolute top-0 inset-x-0 flex gap-1 p-2">
+                  <div className="absolute top-0 inset-x-0 flex gap-1 p-2 hide-in-capture">
                     {storyCards.map((_, idx) => (
                       <div
                         key={idx}
@@ -643,7 +675,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                   {/* Close button */}
                   <button
                     onClick={handleClose}
-                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 active:bg-white/30 z-20"
+                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 active:bg-white/30 z-20 hide-in-capture"
                   >
                     <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -651,7 +683,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                   </button>
 
                   {/* Share/Download buttons */}
-                  <div className="absolute bottom-4 right-4 flex items-center gap-2 z-20">
+                  <div className="absolute bottom-4 right-4 flex items-center gap-2 z-20 hide-in-capture">
                     <button
                       onClick={(e) => handleShare(storyCards[currentCardIndex], e)}
                       className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 active:bg-white/40"
@@ -674,7 +706,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
         </div>
 
         {/* Next button - outside for larger screens */}
-        <div className="hidden md:block ml-8">
+        <div className="hidden md:block ml-8 hide-in-capture">
           <button
             onClick={handleNext}
             className={cn(
