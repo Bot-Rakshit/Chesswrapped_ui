@@ -10,6 +10,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { FloatingDock } from '@/components/ui/floating-dock';
 import { navigationItems } from '@/constants/navigation';
 import type { VerificationState } from '@/types/domain.types';
+import { ChessWrappedStory } from '@/components/chess-wrapped/ChessWrappedStory';
 
 const LandingPage: FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -21,6 +22,7 @@ const LandingPage: FC = () => {
   const [showVerification, setShowVerification] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [userCount, setUserCount] = useState<number>(730);
+  const [showWrapped, setShowWrapped] = useState(false);
 
   useEffect(() => {
     const fetchUserCount = async () => {
@@ -87,17 +89,14 @@ const LandingPage: FC = () => {
 
   const handleGenerate = async () => {
     setVerificationState(state => ({ ...state, isLoading: true }));
-    // This will be replaced with actual generation logic
-    console.log('Generating wrapped for:', {
-      username: username
-    });
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setVerificationState(state => ({ ...state, isLoading: false }));
+    setShowWrapped(true);
   };
 
   return (
     <div className="fixed inset-0 bg-[#0a1628] overflow-hidden">
+      {/* Show ChessWrappedStory when showWrapped is true */}
+      {showWrapped && <ChessWrappedStory />}
+
       {/* Background Boxes */}
       <div className="absolute inset-0 z-10">
         <Boxes />
