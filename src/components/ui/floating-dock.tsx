@@ -21,9 +21,9 @@ export const FloatingDock = ({
   return (
     <>
       {/* Dock containers */}
-      <div className="z-50">
+      <div className="z-[100] relative">
         {/* Desktop - Vertical Dock */}
-        <div className="hidden md:block fixed right-6 lg:right-8 top-1/2 -translate-y-1/2">
+        <div className="fixed right-6 lg:right-8 top-1/2 -translate-y-1/2">
           <FloatingDockDesktop items={items} className={cn(
             "flex-col py-3",
             desktopClassName
@@ -31,7 +31,7 @@ export const FloatingDock = ({
         </div>
         
         {/* Mobile - Bottom Dock */}
-        <div className="block md:hidden fixed bottom-0 left-0 right-0 z-50">
+        <div className="block md:hidden fixed bottom-0 left-0 right-0 z-[100]">
           <div className="h-[88px] w-full absolute bottom-0 bg-gradient-to-t from-[#030711] to-transparent" />
           <div className="container mx-auto max-w-7xl px-4 pb-4">
             <div className="flex justify-center">

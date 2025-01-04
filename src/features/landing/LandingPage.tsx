@@ -103,13 +103,13 @@ const LandingPage: FC = () => {
         <Boxes />
       </div>
 
-      <div className="absolute inset-0 z-30 pointer-events-none">
+      <div className="absolute inset-0 z-20 pointer-events-none">
         <div className="absolute top-0 left-1/3 -translate-x-1/2 w-1/2 sm:w-1/3 aspect-square bg-gradient-to-b from-blue-600/20 blur-[140px]" />
         <div className="absolute bottom-0 right-1/3 translate-x-1/2 w-1/2 sm:w-1/3 aspect-square bg-gradient-to-t from-blue-400/20 blur-[140px]" />
       </div>
 
       {/* Enhanced gradient overlay for better contrast */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/90 via-[#0a1628]/70 to-[#0a1628]/90 z-20 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/90 via-[#0a1628]/70 to-[#0a1628]/90 z-30 pointer-events-none" />
 
       {/* Main Content */}
       <div className="absolute inset-0 z-40 flex items-center justify-center px-3 xs:px-4 sm:px-6 pointer-events-none overflow-y-auto">
@@ -403,12 +403,12 @@ const LandingPage: FC = () => {
         </motion.div>
       </div>
 
-      {/* Floating Dock - Added bottom margin for mobile */}
-      <div className="pb-20 md:pb-0">
+      {/* Floating Dock - Adjusted z-index */}
+      <div className="pb-20 md:pb-0 relative z-[100]">
         <FloatingDock
           items={navigationItems}
-          mobileClassName="absolute bottom-4 left-1/2 -translate-x-1/2 z-50"
-          desktopClassName="absolute bottom-4 left-1/2 -translate-x-1/2 z-50"
+          mobileClassName="absolute bottom-4 left-1/2 -translate-x-1/2"
+          desktopClassName="absolute bottom-4 left-1/2 -translate-x-1/2"
         />
       </div>
     </div>
