@@ -20,15 +20,16 @@ const LandingPage: FC = () => {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [showVerification, setShowVerification] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [userCount, setUserCount] = useState<number | null>(null);
+  const [userCount, setUserCount] = useState<number>(730);
 
   useEffect(() => {
     const fetchUserCount = async () => {
       try {
         const count = await ChessService.getUserCount();
-        setUserCount(count);
+        setUserCount(count || 730);
       } catch (error) {
         console.error('Failed to fetch user count:', error);
+        setUserCount(730);
       }
     };
 
@@ -340,28 +341,37 @@ const LandingPage: FC = () => {
                 )}
               </div>
 
-              {/* Buy Me a Coffee Section */}
-              <div className="mt-6 xs:mt-8 flex flex-col items-center justify-center gap-3">
-                {userCount !== null && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-400/90 to-yellow-400/90 px-4 py-2 rounded-lg transition-all duration-200 group shadow-[0_2px_8px_rgba(251,191,36,0.25)] hover:shadow-[0_4px_12px_rgba(251,191,36,0.35)]"
-                  >
-                    <div className="w-6 h-6 rounded-full bg-white/90 flex items-center justify-center">
-                      <svg 
-                        className="w-3.5 h-3.5 text-amber-500" 
-                        fill="currentColor" 
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
-                      </svg>
-                    </div>
-                    <span className="text-[#0D0C22] font-semibold text-sm">
-                      {userCount.toLocaleString()} players wrapped
+              {/* Stats and Support Section */}
+              <div className="mt-6 xs:mt-8 flex items-center justify-center gap-3">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="inline-flex items-center gap-2 bg-orange-500/5 border border-orange-400/10 px-4 py-2 rounded-lg"
+                >
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-orange-400">
+                    <svg 
+                      className="w-4 h-4" 
+                      fill="none"
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-orange-400 font-semibold text-sm">
+                      {userCount.toLocaleString()}
                     </span>
-                  </motion.div>
-                )}
+                    <span className="text-orange-300/90 text-xs">
+                      wraps generated
+                    </span>
+                  </div>
+                </motion.div>
 
                 <a
                   href="https://buymeacoffee.com/rakshitsingh"
