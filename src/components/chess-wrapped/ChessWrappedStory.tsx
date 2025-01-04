@@ -432,6 +432,33 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
     }
   };
 
+  // Hide floating dock when story is visible
+  useEffect(() => {
+    const dock = document.querySelector('[data-floating-dock]');
+    if (dock) {
+      dock.classList.add('hidden');
+    }
+
+    // Cleanup - show dock when component unmounts
+    return () => {
+      if (dock) {
+        dock.classList.remove('hidden');
+      }
+    };
+  }, []);
+
+  // Show dock in completion view
+  useEffect(() => {
+    const dock = document.querySelector('[data-floating-dock]');
+    if (dock) {
+      if (storyComplete) {
+        dock.classList.remove('hidden');
+      } else {
+        dock.classList.add('hidden');
+      }
+    }
+  }, [storyComplete]);
+
   if (loading) {
     return <MultiStepLoader loadingStates={loadingStates} loading={loading} duration={2000} />;
   }
