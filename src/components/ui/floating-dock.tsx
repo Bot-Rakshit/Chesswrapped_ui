@@ -20,8 +20,11 @@ export const FloatingDock = ({
 }) => {
   return (
     <>
+      {/* Add padding to bottom of page to prevent content overlap with mobile dock */}
+      <div className="md:hidden h-[88px]" />
+      
       {/* Dock containers */}
-      <div className="fixed z-50">
+      <div className="z-50">
         {/* Desktop - Vertical Dock */}
         <div className="hidden md:block fixed right-6 lg:right-8 top-1/2 -translate-y-1/2">
           <FloatingDockDesktop items={items} className={cn(
@@ -31,8 +34,8 @@ export const FloatingDock = ({
         </div>
         
         {/* Mobile - Bottom Dock */}
-        <div className="block md:hidden fixed bottom-0 left-0 right-0">
-          <div className="container mx-auto max-w-7xl px-4 pb-4">
+        <div className="block md:hidden fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-[#030711] to-transparent pb-4 pt-2">
+          <div className="container mx-auto max-w-7xl px-4">
             <div className="flex justify-center">
               <MobileNavBar items={items} className={cn(
                 "block md:hidden",
@@ -83,7 +86,6 @@ const MobileNavBar = ({
       "border-2 border-blue-500/30 rounded-2xl",
       "shadow-[0_0_30px_rgba(59,130,246,0.15)]",
       "transition-all duration-300",
-      "fixed bottom-4 left-1/2 -translate-x-1/2",
       className
     )}>
       <nav>
