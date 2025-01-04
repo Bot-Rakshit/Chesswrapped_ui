@@ -1,4 +1,4 @@
-import { IconHome, IconBrandGithub, IconBrandTwitter, IconInfoCircle } from '@tabler/icons-react';
+  import { IconHome, IconBrandGithub, IconBrandTwitter, IconInfoCircle } from '@tabler/icons-react';
 import { NavigationItem } from '../types';
 
 export const navigationItems: NavigationItem[] = [
