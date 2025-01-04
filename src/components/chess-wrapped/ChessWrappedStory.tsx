@@ -297,6 +297,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
   // Handle close
   const handleClose = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setStoryComplete(true);
   };
@@ -344,8 +345,8 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
   // Handle click navigation
   const handleScreenClick = (e: React.MouseEvent) => {
-    // Don't trigger navigation if clicking on buttons
-    if ((e.target as HTMLElement).closest('button')) {
+    // Don't trigger navigation if clicking on buttons or if story is complete
+    if ((e.target as HTMLElement).closest('button') || storyComplete) {
       return;
     }
 
@@ -643,10 +644,10 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                     ))}
                   </div>
 
-                  {/* Close button */}
+                  {/* Close button - moved outside other elements for better click handling */}
                   <button
                     onClick={handleClose}
-                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 active:bg-white/30 z-20 hide-in-capture"
+                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 active:bg-white/30 z-50 hide-in-capture"
                   >
                     <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
