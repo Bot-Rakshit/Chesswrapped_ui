@@ -225,47 +225,6 @@ const CompletionPlayerCard: React.FC<{ player: PlayerData }> = ({ player }) => {
   );
 };
 
-// Simplified share menu for download only
-const ShareMenu: React.FC<{ 
-  isOpen: boolean;
-  onClose: () => void;
-}> = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div 
-        className="bg-[#0a1628] rounded-2xl p-6 max-w-sm w-full shadow-xl border-2 border-white/10"
-        onClick={e => e.stopPropagation()}
-      >
-        <h3 className="text-lg font-semibold text-white mb-2">Download Card</h3>
-        <p className="text-sm text-white/60 mb-4">Save this card as an image</p>
-        
-        <button
-          onClick={() => {
-            // Add download logic here
-            onClose();
-          }}
-          className={cn(
-            "w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg transition-colors",
-            "text-sm font-medium",
-            "bg-purple-500/20 hover:bg-purple-500/30 text-purple-300"
-          )}
-        >
-          <IconDownload className="w-5 h-5" />
-          <span>Download Image</span>
-        </button>
-      </div>
-    </motion.div>
-  );
-};
-
 // Add CSS for capture mode
 const captureStyles = `
   .capture-mode .hide-in-capture {
@@ -278,7 +237,6 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
   const [loading, setLoading] = useState(true);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [storyComplete, setStoryComplete] = useState(false);
-  const [selectedCard, setSelectedCard] = useState<StoryCard | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Convert current card to image
@@ -289,11 +247,31 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
       // Add capture mode class before capturing
       cardRef.current.classList.add('capture-mode');
       
-      const canvas = await html2canvas(cardRef.current, {
-        backgroundColor: null,
-        scale: 2, // Higher quality
-        width: 1080, // Instagram story width
-        height: 1920, // Instagram story height
+      // Get the content element (the actual card content)
+      const contentElement = cardRef.current.querySelector('.card-content');
+      if (!contentElement) {
+        console.error('Could not find card content element');
+        return null;
+      }
+
+      const canvas = await html2canvas(contentElement as HTMLElement, {
+        backgroundColor: 'black',
+        scale: 3, // Higher quality
+        width: 1080,
+        height: 1920,
+        windowWidth: 1080,
+        windowHeight: 1920,
+        logging: true,
+        onclone: (clonedDoc) => {
+          // Ensure the cloned element has the right dimensions
+          const clonedContent = clonedDoc.querySelector('.card-content') as HTMLElement;
+          if (clonedContent) {
+            clonedContent.style.width = '1080px';
+            clonedContent.style.height = '1920px';
+            clonedContent.style.transform = 'none';
+            clonedContent.style.position = 'relative';
+          }
+        }
       });
       
       // Remove capture mode class after capturing
@@ -512,19 +490,22 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                   {/* Share/Download buttons */}
                   <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                     <div className="flex items-center gap-2">
-                      <button
-                        onClick={(e) => handleShare(card, e)}
-                        className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 active:bg-white/40"
-                      >
-                        <IconShare3 className="w-4 h-4" />
-                        Share
-                      </button>
+                      {/* Only show share on mobile */}
+                      <div className="md:hidden flex-1">
+                        <button
+                          onClick={(e) => handleShare(card, e)}
+                          className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 active:bg-white/40"
+                        >
+                          <IconShare3 className="w-4 h-4" />
+                          <span className="md:hidden">Share</span>
+                        </button>
+                      </div>
                       <button
                         onClick={(e) => handleDownload(card, e)}
                         className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 active:bg-white/40"
                       >
                         <IconDownload className="w-4 h-4" />
-                        Download
+                        <span className="md:hidden">Download</span>
                       </button>
                     </div>
                   </div>
@@ -532,16 +513,6 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
               </div>
             ))}
           </div>
-
-          {/* Download menu */}
-          <AnimatePresence>
-            {selectedCard && (
-              <ShareMenu
-                isOpen={true}
-                onClose={() => setSelectedCard(null)}
-              />
-            )}
-          </AnimatePresence>
         </div>
       </div>
     );
@@ -550,7 +521,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
   return (
     <div className="fixed inset-0 bg-black z-[100] flex items-center justify-center">
       <div className="relative flex items-center h-full">
-        {/* Previous button - outside for larger screens */}
+        {/* Previous button - only on desktop */}
         <div className="hidden md:block mr-8 hide-in-capture">
           <button
             onClick={handlePrevious}
@@ -594,7 +565,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
               >
                 <div 
                   className={cn(
-                    "w-full h-full relative",
+                    "w-full h-full relative card-content",
                     storyCards[currentCardIndex].background
                   )}
                 >
@@ -684,19 +655,20 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
                   {/* Share/Download buttons */}
                   <div className="absolute bottom-4 right-4 flex items-center gap-2 z-20 hide-in-capture">
-                    <button
-                      onClick={(e) => handleShare(storyCards[currentCardIndex], e)}
-                      className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 active:bg-white/40"
-                    >
-                      <IconShare3 className="w-4 h-4" />
-                      Share
-                    </button>
+                    {/* Only show share on mobile */}
+                    <div className="md:hidden">
+                      <button
+                        onClick={(e) => handleShare(storyCards[currentCardIndex], e)}
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
+                      >
+                        <IconShare3 className="w-4 h-4" />
+                      </button>
+                    </div>
                     <button
                       onClick={(e) => handleDownload(storyCards[currentCardIndex], e)}
-                      className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 active:bg-white/40"
+                      className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
                     >
                       <IconDownload className="w-4 h-4" />
-                      Download
                     </button>
                   </div>
                 </div>
@@ -705,7 +677,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
           </div>
         </div>
 
-        {/* Next button - outside for larger screens */}
+        {/* Next button - only on desktop */}
         <div className="hidden md:block ml-8 hide-in-capture">
           <button
             onClick={handleNext}
