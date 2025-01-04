@@ -271,37 +271,24 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
   const [storyComplete, setStoryComplete] = useState(false);
   const [selectedCard, setSelectedCard] = useState<StoryCard | null>(null);
 
-  // Add touch navigation state
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
-
-  // Handle manual navigation
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
-
-    if (isLeftSwipe && currentCardIndex < storyCards.length - 1) {
+  // Handle navigation
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (currentCardIndex < storyCards.length - 1) {
       setCurrentCardIndex(prev => prev + 1);
+    } else {
+      setStoryComplete(true);
     }
-
-    if (isRightSwipe && currentCardIndex > 0) {
-      setCurrentCardIndex(prev => prev - 1);
-    }
-
-    setTouchStart(null);
-    setTouchEnd(null);
   };
+
+  useEffect(() => {
+    // Only keep the loading timeout
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, loadingStates.length * 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -331,32 +318,6 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
     }
   };
 
-  useEffect(() => {
-    // Only keep the loading timeout
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, loadingStates.length * 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Handle navigation
-  const handleNext = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Stop event from triggering handleScreenClick
-    if (currentCardIndex < storyCards.length - 1) {
-      setCurrentCardIndex(prev => prev + 1);
-    } else {
-      setStoryComplete(true);
-    }
-  };
-
-  const handlePrevious = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Stop event from triggering handleScreenClick
-    if (currentCardIndex > 0) {
-      setCurrentCardIndex(prev => prev - 1);
-    }
-  };
-
   // Handle share
   const handleShare = async (card: StoryCard, e?: React.MouseEvent) => {
     if (e) {
@@ -379,6 +340,14 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
     } catch (err) {
       console.error('Error sharing:', err);
     }
+  };
+
+  // Handle download
+  const handleDownload = (card: StoryCard, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    setSelectedCard(card);
   };
 
   // Hide floating dock when story is visible
@@ -422,7 +391,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
           </div>
 
           {/* Story Cards Grid */}
-          <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
             {storyCards.map((card, idx) => (
               <div key={card.id} className="relative group">
                 <motion.div
@@ -446,21 +415,18 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                   </div>
 
                   {/* Share/Download buttons */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                     <div className="flex items-center gap-2">
                       <button
                         onClick={(e) => handleShare(card, e)}
-                        className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30"
+                        className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 active:bg-white/40"
                       >
                         <IconShare3 className="w-4 h-4" />
                         Share
                       </button>
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedCard(card);
-                        }}
-                        className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30"
+                        onClick={(e) => handleDownload(card, e)}
+                        className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 active:bg-white/40"
                       >
                         <IconDownload className="w-4 h-4" />
                         Download
@@ -487,14 +453,11 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
   }
 
   return (
-    <div className="fixed inset-0 bg-black/95 backdrop-blur-sm z-[100] flex items-center justify-center">
-      <div className="relative w-full h-full md:w-auto md:h-auto flex items-center justify-center">
+    <div className="fixed inset-0 bg-black z-[100] flex items-center justify-center">
+      <div className="w-full h-full">
         {/* Story Container */}
         <div 
-          className="relative md:h-[85vh] aspect-[9/16] bg-black shadow-2xl"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+          className="relative w-full h-full"
           onClick={handleScreenClick}
         >
           <AnimatePresence mode="wait">
@@ -508,7 +471,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
             >
               <div 
                 className={cn(
-                  "w-full h-full relative overflow-hidden rounded-none md:rounded-2xl",
+                  "w-full h-full relative",
                   storyCards[currentCardIndex].background
                 )}
               >
@@ -527,10 +490,10 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                     transition={{ delay: 0.2 }}
                     className="text-center mb-8"
                   >
-                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">
                       {storyCards[currentCardIndex].title}
                     </h1>
-                    <p className="text-xl md:text-2xl text-white/80">
+                    <p className="text-lg sm:text-xl md:text-2xl text-white/80">
                       {storyCards[currentCardIndex].subtitle}
                     </p>
                   </motion.div>
@@ -542,7 +505,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                 {/* Navigation buttons */}
                 <div className="absolute inset-x-0 top-0 h-full flex items-center justify-between px-4">
                   <button
-                    onClick={handlePrevious}
+                    onClick={() => setCurrentCardIndex(prev => prev - 1)}
                     className={cn(
                       "w-12 h-12 rounded-full flex items-center justify-center",
                       "bg-white/10 backdrop-blur-sm",
@@ -588,7 +551,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
                 {/* Close button */}
                 <button
-                  onClick={() => setStoryComplete(false)}
+                  onClick={() => setStoryComplete(true)}
                   className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm"
                 >
                   <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -600,17 +563,14 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                 <div className="absolute bottom-4 right-4 flex items-center gap-2">
                   <button
                     onClick={(e) => handleShare(storyCards[currentCardIndex], e)}
-                    className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30"
+                    className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 active:bg-white/40"
                   >
                     <IconShare3 className="w-4 h-4" />
                     Share
                   </button>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedCard(storyCards[currentCardIndex]);
-                    }}
-                    className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30"
+                    onClick={(e) => handleDownload(storyCards[currentCardIndex], e)}
+                    className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 active:bg-white/40"
                   >
                     <IconDownload className="w-4 h-4" />
                     Download
