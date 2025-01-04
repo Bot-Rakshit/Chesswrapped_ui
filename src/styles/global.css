@@ -41,13 +41,16 @@
   }
 
   html {
-    overflow: hidden;
-    height: 100vh;
+    @apply h-full;
   }
 
   body {
-    @apply bg-[#0a1628] text-neutral-50 antialiased overflow-hidden fixed w-full h-screen;
+    @apply bg-[#0a1628] text-neutral-50 antialiased h-full;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+  }
+
+  #root {
+    @apply h-full;
   }
 
   ::selection {
