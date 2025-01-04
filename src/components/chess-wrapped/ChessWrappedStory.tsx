@@ -318,12 +318,71 @@ const ShareMenu: React.FC<{
 export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) => {
   const [loading, setLoading] = useState(true);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
   const [storyComplete, setStoryComplete] = useState(false);
   const [selectedCard, setSelectedCard] = useState<StoryCard | null>(null);
 
+  // Add touch navigation state
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  // Handle manual navigation
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && currentCardIndex < storyCards.length - 1) {
+      setCurrentCardIndex(prev => prev + 1);
+    }
+
+    if (isRightSwipe && currentCardIndex > 0) {
+      setCurrentCardIndex(prev => prev - 1);
+    }
+
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
+
+  // Handle keyboard navigation
   useEffect(() => {
-    // Simulate loading time
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight' && currentCardIndex < storyCards.length - 1) {
+        setCurrentCardIndex(prev => prev + 1);
+      }
+      if (e.key === 'ArrowLeft' && currentCardIndex > 0) {
+        setCurrentCardIndex(prev => prev - 1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentCardIndex]);
+
+  // Handle click navigation
+  const handleScreenClick = (e: React.MouseEvent) => {
+    const { clientX } = e;
+    const { innerWidth } = window;
+    const clickPosition = clientX / innerWidth;
+
+    if (clickPosition > 0.7 && currentCardIndex < storyCards.length - 1) {
+      setCurrentCardIndex(prev => prev + 1);
+    } else if (clickPosition < 0.3 && currentCardIndex > 0) {
+      setCurrentCardIndex(prev => prev - 1);
+    }
+  };
+
+  useEffect(() => {
+    // Only keep the loading timeout
     const timer = setTimeout(() => {
       setLoading(false);
     }, loadingStates.length * 2000);
@@ -331,42 +390,26 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
     return () => clearTimeout(timer);
   }, []);
 
-  // Auto advance through stories
-  useEffect(() => {
-    if (!loading && !storyComplete) {
-      const timer = setTimeout(() => {
-        if (currentCardIndex < storyCards.length - 1) {
-          setCurrentCardIndex(prev => prev + 1);
-        } else {
-          setStoryComplete(true);
-        }
-      }, 3000); // 3 seconds per card
+  // Add native share handler
+  const handleShare = async (card: StoryCard) => {
+    const shareData = {
+      title: `${playerData.username}'s Chess Wrapped - ${card.title}`,
+      text: `Check out my ${card.title} on Chess Wrapped!`,
+      url: `https://chesswrapped.com/share/${playerData.username}/${card.id}`
+    };
 
-      return () => clearTimeout(timer);
-    }
-  }, [currentCardIndex, loading, storyComplete]);
-
-  const handleNext = () => {
-    if (currentCardIndex < storyCards.length - 1) {
-      setCurrentCardIndex(prev => prev + 1);
+    // Check if native sharing is available (primarily mobile devices)
+    if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
     } else {
-      setStoryComplete(true);
+      // Fall back to custom share menu on desktop
+      setSelectedCard(card);
     }
   };
-
-  const handlePrevious = () => {
-    if (currentCardIndex > 0) {
-      setCurrentCardIndex(prev => prev - 1);
-    }
-  };
-
-  // Hide floating dock when story is visible
-  useEffect(() => {
-    const dock = document.querySelector('[data-floating-dock]');
-    if (dock) {
-      dock.classList.toggle('hidden', isVisible);
-    }
-  }, [isVisible]);
 
   if (loading) {
     return <MultiStepLoader loadingStates={loadingStates} loading={loading} duration={2000} />;
@@ -404,24 +447,26 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                       <p className="text-sm text-white/80">{card.subtitle}</p>
                     </div>
                   </div>
-                </motion.div>
 
-                {/* Share button */}
-                <button
-                  onClick={() => setSelectedCard(card)}
-                  className={cn(
-                    "absolute top-2 right-2 p-2 rounded-full",
-                    "bg-white/10 backdrop-blur-sm opacity-0 group-hover:opacity-100",
-                    "transition-all duration-200 hover:bg-white/20"
-                  )}
-                >
-                  <IconShare3 className="w-5 h-5 text-white" />
-                </button>
+                  {/* Share button */}
+                  <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleShare(card);
+                      }}
+                      className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium"
+                    >
+                      <IconShare3 className="w-4 h-4" />
+                      Share
+                    </button>
+                  </div>
+                </motion.div>
               </div>
             ))}
           </div>
 
-          {/* Share menu */}
+          {/* Share menu - only shown on desktop */}
           <AnimatePresence>
             {selectedCard && (
               <ShareMenu
@@ -441,7 +486,13 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
     <div className="fixed inset-0 bg-black/95 backdrop-blur-sm z-[100] flex items-center justify-center">
       <div className="relative w-full h-full md:w-auto md:h-auto flex items-center justify-center">
         {/* Story Container - Fixed aspect ratio */}
-        <div className="relative md:h-[85vh] aspect-[9/16] bg-black shadow-2xl">
+        <div 
+          className="relative md:h-[85vh] aspect-[9/16] bg-black shadow-2xl"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onClick={handleScreenClick}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={currentCardIndex}
@@ -487,7 +538,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                 {/* Navigation buttons */}
                 <div className="absolute inset-x-0 top-0 h-full flex items-center justify-between px-4">
                   <button
-                    onClick={handlePrevious}
+                    onClick={() => setCurrentCardIndex(prev => prev - 1)}
                     className={cn(
                       "w-12 h-12 rounded-full flex items-center justify-center",
                       "bg-white/10 backdrop-blur-sm",
@@ -500,7 +551,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                     </svg>
                   </button>
                   <button
-                    onClick={handleNext}
+                    onClick={() => setCurrentCardIndex(prev => prev + 1)}
                     className={cn(
                       "w-12 h-12 rounded-full flex items-center justify-center",
                       "bg-white/10 backdrop-blur-sm",
@@ -533,13 +584,27 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
                 {/* Close button */}
                 <button
-                  onClick={() => setIsVisible(false)}
+                  onClick={() => setStoryComplete(false)}
                   className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm"
                 >
                   <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
+
+                {/* Share button - Always visible */}
+                <div className="absolute bottom-4 right-4 flex items-center gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleShare(storyCards[currentCardIndex]);
+                    }}
+                    className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium"
+                  >
+                    <IconShare3 className="w-4 h-4" />
+                    Share
+                  </button>
+                </div>
               </div>
             </motion.div>
           </AnimatePresence>
