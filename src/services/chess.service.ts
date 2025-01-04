@@ -4,8 +4,11 @@ import type { PlayerData } from '@/types/domain.types';
 
 export class ChessService {
   static async verifyUser(username: string): Promise<PlayerData> {
+    // Normalize username: remove spaces and convert to lowercase
+    const normalizedUsername = username.replace(/\s+/g, '').toLowerCase();
+    
     const response = await axiosInstance.get<never, ChessUserResponse>(
-      `/api/user/verify/${encodeURIComponent(username)}`
+      `/api/user/verify/${encodeURIComponent(normalizedUsername)}`
     );
 
     // Transform API response to domain model

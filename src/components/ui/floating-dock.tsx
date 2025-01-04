@@ -13,20 +13,13 @@ export const FloatingDock = ({
   items,
   desktopClassName,
   mobileClassName,
-  children,
 }: {
   items: { title: string; icon: React.ReactNode; href: string }[];
   desktopClassName?: string;
   mobileClassName?: string;
-  children?: React.ReactNode;
 }) => {
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Main content area that stops above the dock on mobile */}
-      <div className="flex-1 pb-[88px] md:pb-0">
-        {children}
-      </div>
-      
+    <>
       {/* Dock containers */}
       <div className="z-50">
         {/* Desktop - Vertical Dock */}
@@ -38,18 +31,22 @@ export const FloatingDock = ({
         </div>
         
         {/* Mobile - Bottom Dock */}
-        <div className="block md:hidden fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-[#030711] to-transparent pb-4 pt-2">
-          <div className="container mx-auto max-w-7xl px-4">
+        <div className="block md:hidden fixed bottom-0 left-0 right-0 z-50">
+          <div className="h-[88px] w-full absolute bottom-0 bg-gradient-to-t from-[#030711] to-transparent" />
+          <div className="container mx-auto max-w-7xl px-4 pb-4">
             <div className="flex justify-center">
               <MobileNavBar items={items} className={cn(
-                "block md:hidden",
+                "block md:hidden relative z-10",
                 mobileClassName
               )} />
             </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Spacer for mobile layout */}
+      <div className="block md:hidden h-[88px] w-full" aria-hidden="true" />
+    </>
   );
 };
 
