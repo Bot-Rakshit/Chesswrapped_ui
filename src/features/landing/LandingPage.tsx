@@ -1,4 +1,4 @@
-import { type FC, useState } from 'react';
+import { type FC, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils';
 import chesscomLogo from '/chesscom_logo_pawn_negative.svg';
@@ -20,6 +20,20 @@ const LandingPage: FC = () => {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [showVerification, setShowVerification] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [userCount, setUserCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchUserCount = async () => {
+      try {
+        const count = await ChessService.getUserCount();
+        setUserCount(count);
+      } catch (error) {
+        console.error('Failed to fetch user count:', error);
+      }
+    };
+
+    fetchUserCount();
+  }, []);
 
   const handleUsernameChange = (value: string) => {
     setUsername(value);
@@ -169,14 +183,6 @@ const LandingPage: FC = () => {
                         className="h-4 xs:h-5 w-auto opacity-80 group-hover:opacity-100 transition-opacity"
                       />
                     </div>
-                    <motion.div
-                      initial={false}
-                      animate={{
-                        scale: username.length > 0 ? 1 : 0.97,
-                        opacity: username.length > 0 ? 1 : 0.7
-                      }}
-                      className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-blue-400/10 to-blue-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none"
-                    />
                     <input
                       type="text"
                       placeholder="Enter your Chess.com username"
@@ -185,14 +191,11 @@ const LandingPage: FC = () => {
                       disabled={verificationState.isLoading}
                       className={cn(
                         "w-full pl-10 xs:pl-12 pr-3 xs:pr-4 py-3 xs:py-4 rounded-xl",
-                        "bg-[#0a1628]/95 backdrop-blur-sm",
-                        "border-2",
-                        username.length > 0 
-                          ? "border-blue-400/60 shadow-[0_0_30px_rgba(59,130,246,0.3)]" 
-                          : "border-blue-500/40",
+                        "bg-[#0a1628]",
+                        "border-2 border-blue-500/40",
                         "text-sm xs:text-base text-white",
                         "placeholder-white/30",
-                        "focus:outline-none focus:border-blue-400/80 focus:bg-[#0a1628]/90",
+                        "focus:outline-none focus:border-blue-400/80 focus:bg-[#0a1628]",
                         "transition-all duration-300",
                         "disabled:opacity-50 disabled:cursor-wait",
                         "group-hover:border-blue-400/60",
@@ -297,34 +300,19 @@ const LandingPage: FC = () => {
                     onClick={!showVerification ? handleVerifyClick : handleGenerate}
                     disabled={verificationState.isLoading || (showVerification && !isConfirmed)}
                     className={cn(
-                      "w-full relative overflow-hidden group",
-                      "py-3 xs:py-3.5 rounded-xl font-medium text-sm xs:text-base",
-                      "transition-all duration-300",
+                      "w-full py-3 xs:py-3.5 rounded-xl font-medium text-sm xs:text-base",
+                      "transition-all duration-200",
                       (!verificationState.isLoading && (!showVerification || isConfirmed))
                         ? [
-                            "bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500",
+                            "bg-blue-500 hover:bg-blue-600",
                             "text-white",
                             "shadow-[0_0_20px_rgba(59,130,246,0.3)]",
                             "hover:shadow-[0_0_30px_rgba(59,130,246,0.4)]",
-                            "border border-blue-400/30",
-                            "hover:scale-[1.02]",
-                            "active:scale-[0.98]"
+                            "border border-blue-400/30"
                           ]
                         : "bg-blue-950/80 text-white/40 cursor-not-allowed border border-blue-500/20"
                     )}
                   >
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"
-                      animate={{
-                        translateX: (!verificationState.isLoading && (!showVerification || isConfirmed)) ? ["0%", "200%"] : "0%"
-                      }}
-                      transition={{
-                        duration: 2,
-                        ease: "linear",
-                        repeat: Infinity,
-                        repeatType: "loop"
-                      }}
-                    />
                     {verificationState.isLoading ? (
                       <div className="flex items-center justify-center gap-2">
                         <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -346,14 +334,35 @@ const LandingPage: FC = () => {
                         <span>Generating...</span>
                       </div>
                     ) : (
-                      <span className="relative z-10">Generate Your Wrapped</span>
+                      'Generate Your Wrapped'
                     )}
                   </motion.button>
                 )}
               </div>
 
               {/* Buy Me a Coffee Section */}
-              <div className="mt-6 xs:mt-8 flex items-center justify-center">
+              <div className="mt-6 xs:mt-8 flex flex-col items-center justify-center gap-3">
+                {userCount !== null && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-400/90 to-yellow-400/90 px-4 py-2 rounded-lg transition-all duration-200 group shadow-[0_2px_8px_rgba(251,191,36,0.25)] hover:shadow-[0_4px_12px_rgba(251,191,36,0.35)]"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-white/90 flex items-center justify-center">
+                      <svg 
+                        className="w-3.5 h-3.5 text-amber-500" 
+                        fill="currentColor" 
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+                      </svg>
+                    </div>
+                    <span className="text-[#0D0C22] font-semibold text-sm">
+                      {userCount.toLocaleString()} players wrapped
+                    </span>
+                  </motion.div>
+                )}
+
                 <a
                   href="https://buymeacoffee.com/rakshitsingh"
                   target="_blank"

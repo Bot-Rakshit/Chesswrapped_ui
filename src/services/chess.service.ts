@@ -24,5 +24,10 @@ export class ChessService {
     throw new Error(response.error || 'Failed to verify user');
   }
 
+  static async getUserCount(): Promise<number> {
+    const response = await axiosInstance.get('/count');
+    return response.data;
+  }
+
   // Add more chess-related API methods here
 } 
