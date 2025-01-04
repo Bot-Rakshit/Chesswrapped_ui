@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { cn } from "@/utils";
 import { MultiStepLoader } from "../ui/multi-step-loader";
-import { IconShare3, IconDownload, IconBrandX, IconBrandFacebook, IconBrandWhatsapp, IconLink } from '@tabler/icons-react';
+import { IconShare3, IconDownload } from '@tabler/icons-react';
 import type { PlayerData } from '@/types';
 import { Avatar } from '@/components/ui/avatar';
 import { CountryFlag } from '../ui/country-flag';
@@ -224,59 +224,11 @@ const CompletionPlayerCard: React.FC<{ player: PlayerData }> = ({ player }) => {
   );
 };
 
-// Share menu for individual cards
+// Simplified share menu for download only
 const ShareMenu: React.FC<{ 
   isOpen: boolean;
   onClose: () => void;
-  card: StoryCard;
-  playerUsername: string;
-}> = ({ isOpen, onClose, card, playerUsername }) => {
-  const shareUrl = `https://chesswrapped.com/share/${playerUsername}/${card.id}`;
-  
-  const shareOptions = [
-    {
-      name: 'Copy Link',
-      icon: <IconLink className="w-5 h-5" />,
-      onClick: () => {
-        navigator.clipboard.writeText(shareUrl);
-        // Add toast notification here
-      },
-      className: 'bg-gray-500/20 hover:bg-gray-500/30 text-gray-300'
-    },
-    {
-      name: 'Download Image',
-      icon: <IconDownload className="w-5 h-5" />,
-      onClick: () => {
-        // Add download logic here
-      },
-      className: 'bg-purple-500/20 hover:bg-purple-500/30 text-purple-300'
-    },
-    {
-      name: 'Share on X',
-      icon: <IconBrandX className="w-5 h-5" />,
-      onClick: () => {
-        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=Check out my ${card.title} on Chess Wrapped!`);
-      },
-      className: 'bg-black/30 hover:bg-black/50 text-white/80'
-    },
-    {
-      name: 'Share on WhatsApp',
-      icon: <IconBrandWhatsapp className="w-5 h-5" />,
-      onClick: () => {
-        window.open(`https://wa.me/?text=Check out my ${card.title} on Chess Wrapped! ${shareUrl}`);
-      },
-      className: 'bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#25D366]'
-    },
-    {
-      name: 'Share on Facebook',
-      icon: <IconBrandFacebook className="w-5 h-5" />,
-      onClick: () => {
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`);
-      },
-      className: 'bg-[#1877F2]/20 hover:bg-[#1877F2]/30 text-[#1877F2]'
-    },
-  ];
-
+}> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
@@ -291,25 +243,23 @@ const ShareMenu: React.FC<{
         className="bg-[#0a1628] rounded-2xl p-6 max-w-sm w-full shadow-xl border-2 border-white/10"
         onClick={e => e.stopPropagation()}
       >
-        <h3 className="text-lg font-semibold text-white mb-2">Share {card.title}</h3>
-        <p className="text-sm text-white/60 mb-4">Choose how you want to share this card</p>
+        <h3 className="text-lg font-semibold text-white mb-2">Download Card</h3>
+        <p className="text-sm text-white/60 mb-4">Save this card as an image</p>
         
-        <div className="grid grid-cols-1 gap-3">
-          {shareOptions.map((option) => (
-            <button
-              key={option.name}
-              onClick={option.onClick}
-              className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
-                "text-sm font-medium",
-                option.className
-              )}
-            >
-              {option.icon}
-              <span>{option.name}</span>
-            </button>
-          ))}
-        </div>
+        <button
+          onClick={() => {
+            // Add download logic here
+            onClose();
+          }}
+          className={cn(
+            "w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg transition-colors",
+            "text-sm font-medium",
+            "bg-purple-500/20 hover:bg-purple-500/30 text-purple-300"
+          )}
+        >
+          <IconDownload className="w-5 h-5" />
+          <span>Download Image</span>
+        </button>
       </div>
     </motion.div>
   );
@@ -410,7 +360,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
   // Handle share
   const handleShare = async (card: StoryCard, e?: React.MouseEvent) => {
     if (e) {
-      e.stopPropagation(); // Stop event from triggering handleScreenClick
+      e.stopPropagation();
     }
     
     const shareData = {
@@ -419,16 +369,15 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
       url: `https://chesswrapped.com/share/${playerData.username}/${card.id}`
     };
 
-    // Check if native sharing is available (primarily mobile devices)
-    if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-      try {
+    try {
+      if (navigator.share) {
         await navigator.share(shareData);
-      } catch (err) {
-        console.error('Error sharing:', err);
+      } else {
+        // If Web Share API is not available, show download option
+        setSelectedCard(card);
       }
-    } else {
-      // Fall back to custom share menu on desktop
-      setSelectedCard(card);
+    } catch (err) {
+      console.error('Error sharing:', err);
     }
   };
 
@@ -496,32 +445,39 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                     </div>
                   </div>
 
-                  {/* Share button */}
+                  {/* Share/Download buttons */}
                   <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleShare(card);
-                      }}
-                      className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium"
-                    >
-                      <IconShare3 className="w-4 h-4" />
-                      Share
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => handleShare(card, e)}
+                        className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30"
+                      >
+                        <IconShare3 className="w-4 h-4" />
+                        Share
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCard(card);
+                        }}
+                        className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30"
+                      >
+                        <IconDownload className="w-4 h-4" />
+                        Download
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
               </div>
             ))}
           </div>
 
-          {/* Share menu - only shown on desktop */}
+          {/* Download menu */}
           <AnimatePresence>
             {selectedCard && (
               <ShareMenu
                 isOpen={true}
                 onClose={() => setSelectedCard(null)}
-                card={selectedCard}
-                playerUsername={playerData.username}
               />
             )}
           </AnimatePresence>
@@ -640,14 +596,24 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                   </svg>
                 </button>
 
-                {/* Share button */}
+                {/* Share/Download buttons */}
                 <div className="absolute bottom-4 right-4 flex items-center gap-2">
                   <button
                     onClick={(e) => handleShare(storyCards[currentCardIndex], e)}
-                    className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-colors"
+                    className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30"
                   >
                     <IconShare3 className="w-4 h-4" />
                     Share
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedCard(storyCards[currentCardIndex]);
+                    }}
+                    className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30"
+                  >
+                    <IconDownload className="w-4 h-4" />
+                    Download
                   </button>
                 </div>
               </div>
