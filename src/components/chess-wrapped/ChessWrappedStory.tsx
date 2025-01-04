@@ -390,8 +390,29 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
     return () => clearTimeout(timer);
   }, []);
 
-  // Add native share handler
-  const handleShare = async (card: StoryCard) => {
+  // Handle navigation
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Stop event from triggering handleScreenClick
+    if (currentCardIndex < storyCards.length - 1) {
+      setCurrentCardIndex(prev => prev + 1);
+    } else {
+      setStoryComplete(true);
+    }
+  };
+
+  const handlePrevious = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Stop event from triggering handleScreenClick
+    if (currentCardIndex > 0) {
+      setCurrentCardIndex(prev => prev - 1);
+    }
+  };
+
+  // Handle share
+  const handleShare = async (card: StoryCard, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation(); // Stop event from triggering handleScreenClick
+    }
+    
     const shareData = {
       title: `${playerData.username}'s Chess Wrapped - ${card.title}`,
       text: `Check out my ${card.title} on Chess Wrapped!`,
@@ -485,7 +506,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
   return (
     <div className="fixed inset-0 bg-black/95 backdrop-blur-sm z-[100] flex items-center justify-center">
       <div className="relative w-full h-full md:w-auto md:h-auto flex items-center justify-center">
-        {/* Story Container - Fixed aspect ratio */}
+        {/* Story Container */}
         <div 
           className="relative md:h-[85vh] aspect-[9/16] bg-black shadow-2xl"
           onTouchStart={handleTouchStart}
@@ -538,7 +559,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                 {/* Navigation buttons */}
                 <div className="absolute inset-x-0 top-0 h-full flex items-center justify-between px-4">
                   <button
-                    onClick={() => setCurrentCardIndex(prev => prev - 1)}
+                    onClick={handlePrevious}
                     className={cn(
                       "w-12 h-12 rounded-full flex items-center justify-center",
                       "bg-white/10 backdrop-blur-sm",
@@ -551,7 +572,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                     </svg>
                   </button>
                   <button
-                    onClick={() => setCurrentCardIndex(prev => prev + 1)}
+                    onClick={handleNext}
                     className={cn(
                       "w-12 h-12 rounded-full flex items-center justify-center",
                       "bg-white/10 backdrop-blur-sm",
@@ -592,14 +613,11 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                   </svg>
                 </button>
 
-                {/* Share button - Always visible */}
+                {/* Share button */}
                 <div className="absolute bottom-4 right-4 flex items-center gap-2">
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleShare(storyCards[currentCardIndex]);
-                    }}
-                    className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium"
+                    onClick={(e) => handleShare(storyCards[currentCardIndex], e)}
+                    className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-colors"
                   >
                     <IconShare3 className="w-4 h-4" />
                     Share
