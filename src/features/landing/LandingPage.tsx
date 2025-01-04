@@ -95,7 +95,9 @@ const LandingPage: FC = () => {
   return (
     <div className="fixed inset-0 bg-[#0a1628] overflow-hidden">
       {/* Show ChessWrappedStory when showWrapped is true */}
-      {showWrapped && <ChessWrappedStory />}
+      {showWrapped && verificationState.playerData && (
+        <ChessWrappedStory playerData={verificationState.playerData} />
+      )}
 
       {/* Background Boxes */}
       <div className="absolute inset-0 z-10">

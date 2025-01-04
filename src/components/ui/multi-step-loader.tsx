@@ -1,75 +1,151 @@
-import { motion } from "framer-motion";
+"use client";
+
+import * as React from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/utils";
 
-export const MultiStepLoader = ({
-  loadingStates,
-  loading,
-  duration = 2000,
-}: {
-  loadingStates: { text: string }[];
-  loading: boolean;
+interface LoadingState {
+  text: string;
+}
+
+interface LoaderCoreProps {
+  loadingStates: LoadingState[];
+  value?: number;
+}
+
+interface MultiStepLoaderProps {
+  loadingStates: LoadingState[];
+  loading?: boolean;
   duration?: number;
-}) => {
-  if (!loading) return null;
+  loop?: boolean;
+}
 
+const CheckIcon: React.FC<{ className?: string }> = ({ className }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0a1628]/95 backdrop-blur-md"
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className={cn("w-6 h-6", className)}
     >
-      <div className="w-full max-w-xl mx-auto px-4">
-        <div className="relative">
-          {/* Loading states */}
-          {loadingStates.map((state, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{
-                duration: duration / 1000,
-                delay: (idx * duration) / 1000,
-                ease: "easeInOut",
-              }}
-              className={cn(
-                "absolute inset-0 flex items-center justify-center",
-                "text-lg xs:text-xl sm:text-2xl font-medium text-white/90",
-                "text-center"
-              )}
-              style={{
-                animation: `fadeInOut ${duration}ms ${
-                  (idx * duration) / 1000
-                }ms forwards`,
-              }}
-            >
-              {state.text}
-            </motion.div>
-          ))}
-
-          {/* Loading bar */}
-          <motion.div
-            className="h-1 bg-gradient-to-r from-blue-500 to-blue-400 rounded-full"
-            initial={{ width: "0%" }}
-            animate={{ width: "100%" }}
-            transition={{
-              duration: (loadingStates.length * duration) / 1000,
-              ease: "linear",
-            }}
-          />
-        </div>
-      </div>
-    </motion.div>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+    </svg>
   );
 };
 
-// Add keyframes for fade in/out animation
-const style = document.createElement("style");
-style.textContent = `
-  @keyframes fadeInOut {
-    0%, 100% { opacity: 0; transform: translateY(10px); }
-    25%, 75% { opacity: 1; transform: translateY(0); }
-  }
-`;
-document.head.appendChild(style); 
+const CheckFilled: React.FC<{ className?: string }> = ({ className }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={cn("w-6 h-6", className)}
+    >
+      <path
+        fillRule="evenodd"
+        d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+};
+
+const LoaderCore: React.FC<LoaderCoreProps> = ({
+  loadingStates,
+  value = 0,
+}) => {
+  return (
+    <div className="flex relative justify-start max-w-xl mx-auto flex-col mt-40">
+      {loadingStates.map((loadingState, index) => {
+        const distance = Math.abs(index - value);
+        const opacity = Math.max(1 - distance * 0.2, 0);
+
+        return (
+          <motion.div
+            key={index}
+            className={cn("text-left flex gap-2 mb-4")}
+            initial={{ opacity: 0, y: -(value * 40) }}
+            animate={{ opacity: opacity, y: -(value * 40) }}
+            transition={{ duration: 0.5 }}
+          >
+            <div>
+              {index > value && (
+                <CheckIcon className="text-white/60" />
+              )}
+              {index <= value && (
+                <CheckFilled
+                  className={cn(
+                    "text-white/60",
+                    value === index && "text-blue-400"
+                  )}
+                />
+              )}
+            </div>
+            <span
+              className={cn(
+                "text-white/60",
+                value === index && "text-blue-400"
+              )}
+            >
+              {loadingState.text}
+            </span>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+};
+
+export const MultiStepLoader: React.FC<MultiStepLoaderProps> = ({
+  loadingStates,
+  loading,
+  duration = 2000,
+  loop = true,
+}) => {
+  const [currentState, setCurrentState] = React.useState(0);
+
+  React.useEffect(() => {
+    if (!loading) {
+      setCurrentState(0);
+      return;
+    }
+    const timeout = setTimeout(() => {
+      setCurrentState((prevState) =>
+        loop
+          ? prevState === loadingStates.length - 1
+            ? 0
+            : prevState + 1
+          : Math.min(prevState + 1, loadingStates.length - 1)
+      );
+    }, duration);
+
+    return () => clearTimeout(timeout);
+  }, [currentState, loading, loop, loadingStates.length, duration]);
+
+  return (
+    <AnimatePresence mode="wait">
+      {loading && (
+        <motion.div
+          initial={{
+            opacity: 0,
+          }}
+          animate={{
+            opacity: 1,
+          }}
+          exit={{
+            opacity: 0,
+          }}
+          className="w-full h-full fixed inset-0 z-[100] flex items-center justify-center bg-[#0a1628]/95 backdrop-blur-xl"
+        >
+          <div className="h-96 relative">
+            <LoaderCore value={currentState} loadingStates={loadingStates} />
+          </div>
+
+          <div className="bg-gradient-to-t inset-x-0 z-20 bottom-0 bg-[#0a1628] h-full absolute [mask-image:radial-gradient(900px_at_center,transparent_30%,#0a1628)]" />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
