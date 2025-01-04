@@ -13,15 +13,19 @@ export const FloatingDock = ({
   items,
   desktopClassName,
   mobileClassName,
+  children,
 }: {
   items: { title: string; icon: React.ReactNode; href: string }[];
   desktopClassName?: string;
   mobileClassName?: string;
+  children?: React.ReactNode;
 }) => {
   return (
-    <>
-      {/* Add padding to bottom of page to prevent content overlap with mobile dock */}
-      <div className="md:hidden h-[88px]" />
+    <div className="min-h-screen flex flex-col">
+      {/* Main content area that stops above the dock on mobile */}
+      <div className="flex-1 pb-[88px] md:pb-0">
+        {children}
+      </div>
       
       {/* Dock containers */}
       <div className="z-50">
@@ -45,7 +49,7 @@ export const FloatingDock = ({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
