@@ -28,11 +28,11 @@ export class ChessService {
   }
 
   static async getUserCount(): Promise<number> {
-    const response = await axiosInstance.get<never, { success: boolean; data: { count: number } }>('/count');
+    const response = await axiosInstance.get<never, { success: boolean; data: { count: number } }>('/api/user/count');
     if (response.success && response.data) {
       return response.data.count;
     }
-    return 730; // Fallback count
+    return 730; // Fallback counts
   }
 
   // Add more chess-related API methods here
