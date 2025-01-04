@@ -1,15 +1,16 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/utils";
 import { MultiStepLoader } from "../ui/multi-step-loader";
 import { IconShare3, IconDownload } from '@tabler/icons-react';
 import type { PlayerData } from '@/types';
 import { Avatar } from '@/components/ui/avatar';
 import { CountryFlag } from '../ui/country-flag';
+import html2canvas from 'html2canvas';
 
 const loadingStates = [
   { text: "Connecting to Chess.com..." },
-  { text: "Analyzing your games from 2023..." },
+  { text: "Analyzing your games from 2025..." },
   { text: "Finding your brilliant moves..." },
   { text: "Calculating your win rates..." },
   { text: "Discovering your favorite openings..." },
@@ -270,6 +271,23 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [storyComplete, setStoryComplete] = useState(false);
   const [selectedCard, setSelectedCard] = useState<StoryCard | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // Convert current card to image
+  const captureCard = async () => {
+    if (!cardRef.current) return null;
+    
+    try {
+      const canvas = await html2canvas(cardRef.current, {
+        backgroundColor: null,
+        scale: 2, // Higher quality
+      });
+      return canvas.toDataURL('image/png');
+    } catch (err) {
+      console.error('Error capturing card:', err);
+      return null;
+    }
+  };
 
   // Handle close
   const handleClose = (e: React.MouseEvent) => {
@@ -341,19 +359,34 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
     if (e) {
       e.stopPropagation();
     }
-    
-    const shareData = {
-      title: `${playerData.username}'s Chess Wrapped - ${card.title}`,
-      text: `Check out my ${card.title} on Chess Wrapped!`,
-      url: `https://chesswrapped.com/share/${playerData.username}/${card.id}`
-    };
 
     try {
+      const imageUrl = await captureCard();
+      if (!imageUrl) {
+        console.error('Failed to capture card image');
+        return;
+      }
+
+      // Convert base64 to blob
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+
       if (navigator.share) {
-        await navigator.share(shareData);
+        // Share image on mobile
+        const file = new File([blob], 'chess-wrapped.png', { type: 'image/png' });
+        await navigator.share({
+          title: `${playerData.username}'s Chess Wrapped - ${card.title}`,
+          text: `Check out my ${card.title} on Chess Wrapped!`,
+          files: [file]
+        });
       } else {
-        // If Web Share API is not available, show download option
-        setSelectedCard(card);
+        // Download on desktop
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.download = `chess-wrapped-${card.id}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
     } catch (err) {
       console.error('Error sharing:', err);
@@ -361,11 +394,27 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
   };
 
   // Handle download
-  const handleDownload = (card: StoryCard, e?: React.MouseEvent) => {
+  const handleDownload = async (card: StoryCard, e?: React.MouseEvent) => {
     if (e) {
       e.stopPropagation();
     }
-    setSelectedCard(card);
+    
+    try {
+      const imageUrl = await captureCard();
+      if (!imageUrl) {
+        console.error('Failed to capture card image');
+        return;
+      }
+
+      const link = document.createElement('a');
+      link.href = imageUrl;
+      link.download = `chess-wrapped-${card.id}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Error downloading:', err);
+    }
   };
 
   // Hide floating dock when story is visible
@@ -472,7 +521,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
   return (
     <div className="fixed inset-0 bg-black z-[100] flex items-center justify-center">
-      <div className="relative flex items-center">
+      <div className="relative flex items-center h-full">
         {/* Previous button - outside for larger screens */}
         <div className="hidden md:block mr-8">
           <button
@@ -492,7 +541,11 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
         </div>
 
         {/* Phone-like container */}
-        <div className="w-full h-full md:w-[375px] md:h-[667px] md:rounded-[40px] md:shadow-2xl relative bg-black overflow-hidden">
+        <div 
+          ref={cardRef}
+          className="w-full h-full md:w-[375px] md:h-[667px] md:rounded-[40px] md:shadow-2xl relative bg-black overflow-hidden"
+          style={{ height: '100dvh' }} // Use dynamic viewport height for mobile
+        >
           {/* Story Container */}
           <div 
             className="relative w-full h-full"
