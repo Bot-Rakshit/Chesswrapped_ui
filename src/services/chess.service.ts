@@ -28,7 +28,7 @@ export class ChessService {
   }
 
   static async getUserCount(): Promise<number> {
-    const response = await axiosInstance.get<never, { success: boolean; data: { count: number } }>('/count');
+    const response = await axiosInstance.get<never, { success: boolean; data: { count: number } }>('/api/user/count');
     if (response.success && response.data) {
       return response.data.count;
     }
