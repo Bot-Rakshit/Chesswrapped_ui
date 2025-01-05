@@ -296,9 +296,8 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
   }, []);
 
   // Handle close
-  const handleClose = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleClose = () => {
+    console.log('Close button clicked'); // Debug log
     setStoryComplete(true);
   };
 
@@ -550,6 +549,16 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
             maxHeight: 'calc(100vw * 16/9)'
           }}
         >
+          {/* Close button - Moved outside the story container for better click handling */}
+          <button
+            onClick={handleClose}
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 active:bg-white/30 z-[60] hide-in-capture cursor-pointer"
+          >
+            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
           {/* Story Container */}
           <div 
             className="relative w-full h-full"
@@ -643,16 +652,6 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                       </div>
                     ))}
                   </div>
-
-                  {/* Close button - moved outside other elements for better click handling */}
-                  <button
-                    onClick={handleClose}
-                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 active:bg-white/30 z-50 hide-in-capture"
-                  >
-                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
 
                   {/* Share/Download buttons */}
                   <div className="absolute bottom-4 right-4 flex items-center gap-2 z-20 hide-in-capture">
