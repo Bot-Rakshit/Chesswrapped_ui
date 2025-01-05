@@ -296,10 +296,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
   }, []);
 
   // Handle close
-  const handleClose = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log('Close button clicked'); // Debug log
+  const handleClose = () => {
     setStoryComplete(true);
   };
 
@@ -547,28 +544,21 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
             maxHeight: 'calc(100vw * 16/9)'
           }}
         >
-          {/* Close button container - Positioned above everything */}
-          <div 
-            className="absolute top-0 left-0 right-0 z-[9999] p-4 pointer-events-none hide-in-capture"
-            data-close-button
-          >
-            <div className="relative flex justify-end pointer-events-auto">
-              <button
-                onClick={handleClose}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
-              >
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
           {/* Story Container */}
           <div 
             className="relative w-full h-full"
             onClick={handleScreenClick}
           >
+            {/* Close button */}
+            <button
+              onClick={handleClose}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40 z-[9999] hide-in-capture"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentCardIndex}
