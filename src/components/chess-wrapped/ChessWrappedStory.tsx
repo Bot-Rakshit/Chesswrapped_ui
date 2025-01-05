@@ -523,42 +523,9 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
   return (
     <div className="fixed inset-0 bg-black z-[100]">
-      {/* Close button - Updated to match mobile button patterns */}
-      <div className="fixed top-4 right-4 z-[1001]">
-        <button
-          onClick={handleClose}
-          className="w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40 pointer-events-auto"
-        >
-          <svg className="w-6 h-6 text-white pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Story container - Add pointer-events-auto */}
-      <div 
-        className="h-full flex items-center justify-center pointer-events-auto"
-        onClick={handleScreenClick}
-      >
+      {/* Move close button inside the card content area and simplify its structure */}
+      <div className="h-full flex items-center justify-center">
         <div className="relative flex items-center h-full">
-          {/* Previous button - only on desktop */}
-          <div className="hidden md:block mr-8 hide-in-capture">
-            <button
-              onClick={handlePrevious}
-              className={cn(
-                "w-12 h-12 rounded-full flex items-center justify-center",
-                "bg-white/10 backdrop-blur-sm",
-                "transition-all duration-200",
-                "hover:bg-white/20 active:bg-white/30",
-                currentCardIndex === 0 ? "opacity-0 pointer-events-none" : "opacity-100"
-              )}
-            >
-              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-          </div>
-
           {/* Phone-like container */}
           <div 
             ref={cardRef}
@@ -569,6 +536,19 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
               maxHeight: 'calc(100vw * 16/9)'
             }}
           >
+            {/* Close button - Moved inside card content and simplified */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setStoryComplete(true);
+              }}
+              className="absolute top-4 right-4 z-[1001] w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40 pointer-events-auto"
+            >
+              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
             {/* Story Container */}
             <div 
               className="relative w-full h-full"
@@ -685,24 +665,6 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                 </motion.div>
               </AnimatePresence>
             </div>
-          </div>
-
-          {/* Next button - only on desktop */}
-          <div className="hidden md:block ml-8 hide-in-capture">
-            <button
-              onClick={handleNext}
-              className={cn(
-                "w-12 h-12 rounded-full flex items-center justify-center",
-                "bg-white/10 backdrop-blur-sm",
-                "transition-all duration-200",
-                "hover:bg-white/20 active:bg-white/30",
-                currentCardIndex === storyCards.length - 1 ? "opacity-0 pointer-events-none" : "opacity-100"
-              )}
-            >
-              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
           </div>
         </div>
       </div>
