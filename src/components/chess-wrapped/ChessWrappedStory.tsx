@@ -528,19 +528,6 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
               maxHeight: 'calc(100vw * 16/9)'
             }}
           >
-            {/* Close button - Using the inline handler that works */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setStoryComplete(true);
-              }}
-              className="absolute top-4 right-4 z-[1001] w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40 pointer-events-auto"
-            >
-              <svg className="w-6 h-6 text-white pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
             {/* Story Container */}
             <div 
               className="relative w-full h-full"
@@ -635,23 +622,41 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                       ))}
                     </div>
 
-                    {/* Share/Download buttons */}
-                    <div className="absolute bottom-4 right-4 flex items-center gap-2 z-[200] hide-in-capture">
-                      {/* Only show share on mobile */}
-                      <div className="md:hidden">
-                        <button
-                          onClick={(e) => handleShare(storyCards[currentCardIndex], e)}
-                          className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
-                        >
-                          <IconShare3 className="w-4 h-4" />
-                        </button>
-                      </div>
+                    {/* Bottom buttons container */}
+                    <div className="absolute bottom-4 inset-x-4 flex items-center justify-between z-[200] hide-in-capture">
+                      {/* Close button on the left */}
                       <button
-                        onClick={(e) => handleDownload(storyCards[currentCardIndex], e)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setStoryComplete(true);
+                        }}
                         className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
                       >
-                        <IconDownload className="w-4 h-4" />
+                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                       </button>
+
+                      {/* Share/Download buttons on the right */}
+                      <div className="flex items-center gap-2">
+                        {/* Only show share on mobile */}
+                        <div className="md:hidden">
+                          <button
+                            onClick={(e) => handleShare(storyCards[currentCardIndex], e)}
+                            className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
+                          >
+                            <IconShare3 className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <button
+                          onClick={(e) => handleDownload(storyCards[currentCardIndex], e)}
+                          className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
+                        >
+                          <IconDownload className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
