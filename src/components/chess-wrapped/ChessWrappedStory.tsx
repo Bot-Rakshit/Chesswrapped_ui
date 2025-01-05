@@ -10,7 +10,7 @@ import html2canvas from 'html2canvas';
 
 const loadingStates = [
   { text: "Connecting to Chess.com..." },
-  { text: "Analyzing your games from 2025..." },
+  { text: "Analyzing your games from 2024..." },
   { text: "Finding your brilliant moves..." },
   { text: "Calculating your win rates..." },
   { text: "Discovering your favorite openings..." },
