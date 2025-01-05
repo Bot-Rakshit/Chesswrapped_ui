@@ -523,14 +523,13 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
   return (
     <div className="fixed inset-0 bg-black z-[100]">
-      {/* Close button - Updated with pointer-events-auto and z-index */}
-      <div className="fixed top-4 right-4 z-[1001] pointer-events-auto">
+      {/* Close button - Updated to match mobile button patterns */}
+      <div className="fixed top-4 right-4 z-[1001]">
         <button
-          onClick={(e) => handleClose(e)}
-          className="w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
-          style={{ touchAction: 'manipulation' }}
+          onClick={handleClose}
+          className="w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40 pointer-events-auto"
         >
-          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-6 h-6 text-white pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
