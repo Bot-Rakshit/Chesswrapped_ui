@@ -295,12 +295,6 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
     };
   }, []);
 
-  // Handle close
-  const handleClose = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setStoryComplete(true);
-  };
-
   // Handle navigation
   const handleNext = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -523,10 +517,8 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
   return (
     <div className="fixed inset-0 bg-black z-[100]">
-      {/* Move close button inside the card content area and simplify its structure */}
       <div className="h-full flex items-center justify-center">
         <div className="relative flex items-center h-full">
-          {/* Phone-like container */}
           <div 
             ref={cardRef}
             className="w-full h-full md:w-[375px] md:h-[667px] md:rounded-[40px] md:shadow-2xl relative bg-black overflow-hidden"
@@ -536,7 +528,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
               maxHeight: 'calc(100vw * 16/9)'
             }}
           >
-            {/* Close button - Moved inside card content and simplified */}
+            {/* Close button - Using the inline handler that works */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -544,7 +536,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
               }}
               className="absolute top-4 right-4 z-[1001] w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40 pointer-events-auto"
             >
-              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-6 h-6 text-white pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
