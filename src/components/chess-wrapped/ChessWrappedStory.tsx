@@ -515,6 +515,18 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
   return (
     <div className="fixed inset-0 bg-black z-[100] flex items-center justify-center">
+      {/* Close button with increased size for better touch interaction */}
+      <div className="fixed top-4 right-4 z-[1001]">
+        <button
+          onClick={handleClose}
+          className="w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
+        >
+          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
       <div className="relative flex items-center h-full">
         {/* Previous button - only on desktop */}
         <div className="hidden md:block mr-8 hide-in-capture">
@@ -544,18 +556,6 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
             maxHeight: 'calc(100vw * 16/9)'
           }}
         >
-          {/* Close button - Moved outside of click handler area */}
-          <div className="fixed top-0 left-0 right-0 p-4 flex justify-end z-[9999] pointer-events-none">
-            <button
-              onClick={handleClose}
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40 pointer-events-auto"
-            >
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-
           {/* Story Container */}
           <div 
             className="relative w-full h-full"
