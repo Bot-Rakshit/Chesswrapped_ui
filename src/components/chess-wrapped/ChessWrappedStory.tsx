@@ -346,8 +346,9 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
   // Handle click navigation
   const handleScreenClick = (e: React.MouseEvent) => {
-    // Don't trigger navigation if clicking on buttons or if story is complete
-    if ((e.target as HTMLElement).closest('button')) {
+    // Don't trigger navigation if clicking on buttons
+    const target = e.target as HTMLElement;
+    if (target.closest('button') || target.closest('[data-close-button]')) {
       return;
     }
 
@@ -546,13 +547,12 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
             maxHeight: 'calc(100vw * 16/9)'
           }}
         >
-          {/* Story Container */}
+          {/* Close button container - Positioned above everything */}
           <div 
-            className="relative w-full h-full"
-            onClick={handleScreenClick}
+            className="absolute top-0 left-0 right-0 z-[9999] p-4 pointer-events-none hide-in-capture"
+            data-close-button
           >
-            {/* Close button - Moved outside story container and increased z-index */}
-            <div className="absolute top-4 right-4 z-[200] hide-in-capture">
+            <div className="relative flex justify-end pointer-events-auto">
               <button
                 onClick={handleClose}
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
@@ -562,7 +562,13 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                 </svg>
               </button>
             </div>
+          </div>
 
+          {/* Story Container */}
+          <div 
+            className="relative w-full h-full"
+            onClick={handleScreenClick}
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentCardIndex}
