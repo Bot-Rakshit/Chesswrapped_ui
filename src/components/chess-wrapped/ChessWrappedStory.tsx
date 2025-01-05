@@ -343,9 +343,13 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
   // Handle click navigation
   const handleScreenClick = (e: React.MouseEvent) => {
-    // Don't trigger navigation if clicking on buttons
+    // Don't trigger navigation if clicking on buttons or close button
     const target = e.target as HTMLElement;
-    if (target.closest('button') || target.closest('[data-close-button]')) {
+    if (
+      target.closest('button') || 
+      target.closest('[data-close-button]') ||
+      target.hasAttribute('data-close-button')
+    ) {
       return;
     }
 
@@ -515,10 +519,16 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
   return (
     <div className="fixed inset-0 bg-black z-[100] flex items-center justify-center">
-      {/* Close button with increased size for better touch interaction */}
-      <div className="fixed top-4 right-4 z-[1001]">
+      {/* Close button - Updated styles and data attribute */}
+      <div 
+        className="fixed top-4 right-4 z-[1001]" 
+        data-close-button
+        onClick={(e) => {
+          e.stopPropagation();
+          handleClose();
+        }}
+      >
         <button
-          onClick={handleClose}
           className="w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
         >
           <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
