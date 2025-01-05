@@ -509,6 +509,7 @@ export const ChessWrappedStory = ({
       case "games-played":
         return (
           <ChessInNumbersCard
+            username={playerData.username}
             totalGames={wrappedData.intro.totalGames}
             formatBreakdown={formatBreakdown}
           />
