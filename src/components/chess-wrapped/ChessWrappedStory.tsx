@@ -544,21 +544,23 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
             maxHeight: 'calc(100vw * 16/9)'
           }}
         >
-          {/* Story Container */}
-          <div 
-            className="relative w-full h-full"
-            onClick={handleScreenClick}
-          >
-            {/* Close button */}
+          {/* Close button - Moved outside of click handler area */}
+          <div className="fixed top-0 left-0 right-0 p-4 flex justify-end z-[9999] pointer-events-none">
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40 z-[9999] hide-in-capture"
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40 pointer-events-auto"
             >
               <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
+          </div>
 
+          {/* Story Container */}
+          <div 
+            className="relative w-full h-full"
+            onClick={handleScreenClick}
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentCardIndex}
