@@ -10,6 +10,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { FloatingDock } from '@/components/ui/floating-dock';
 import { navigationItems } from '@/constants/navigation';
 import type { VerificationState } from '@/types/domain.types';
+import type { ChessWrappedResponse } from '@/types/api.types';
 import { ChessWrappedStory } from '@/components/chess-wrapped/ChessWrappedStory';
 
 const LandingPage: FC = () => {
@@ -23,6 +24,7 @@ const LandingPage: FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [userCount, setUserCount] = useState<number>(730);
   const [showWrapped, setShowWrapped] = useState(false);
+  const [wrappedData, setWrappedData] = useState<ChessWrappedResponse | null>(null);
 
   useEffect(() => {
     const fetchUserCount = async () => {
@@ -89,14 +91,29 @@ const LandingPage: FC = () => {
 
   const handleGenerate = async () => {
     setVerificationState(state => ({ ...state, isLoading: true }));
-    setShowWrapped(true);
+    try {
+      const wrappedData = await ChessService.getWrapped(username);
+      setWrappedData(wrappedData);
+      setVerificationState(state => ({ ...state, isLoading: false }));
+      setShowWrapped(true);
+    } catch (err) {
+      setVerificationState(state => ({ ...state, isLoading: false }));
+      if (err instanceof APIError) {
+        setError('Failed to generate wrapped data');
+      } else {
+        setError('An unexpected error occurred');
+      }
+    }
   };
 
   return (
     <div className="fixed inset-0 bg-[#0a1628] overflow-hidden">
       {/* Show ChessWrappedStory when showWrapped is true */}
       {showWrapped && verificationState.playerData && (
-        <ChessWrappedStory playerData={verificationState.playerData} />
+        <ChessWrappedStory 
+          playerData={verificationState.playerData} 
+          wrappedData={wrappedData}
+        />
       )}
 
       {/* Background Boxes */}

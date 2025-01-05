@@ -1,5 +1,5 @@
 import { axiosInstance } from '@/lib/axios';
-import type { ChessUserResponse } from '@/types/api.types';
+import type { ChessUserResponse, ChessWrappedResponse } from '@/types/api.types';
 import type { PlayerData } from '@/types/domain.types';
 
 export class ChessService {
@@ -27,12 +27,27 @@ export class ChessService {
     throw new Error(response.error || 'Failed to verify user');
   }
 
+  static async getWrapped(username: string): Promise<ChessWrappedResponse> {
+    // Normalize username: remove spaces and convert to lowercase
+    const normalizedUsername = username.replace(/\s+/g, '').toLowerCase();
+    
+    const response = await axiosInstance.get<never, { success: boolean; data: ChessWrappedResponse }>(
+      `/api/user/wrapped/${encodeURIComponent(normalizedUsername)}`
+    );
+
+    if (response.success && response.data) {
+      return response.data;
+    }
+
+    throw new Error('Failed to fetch wrapped data');
+  }
+
   static async getUserCount(): Promise<number> {
     const response = await axiosInstance.get<never, { success: boolean; data: { count: number } }>('/api/user/count');
     if (response.success && response.data) {
       return response.data.count;
     }
-    return 730; // Fallback count
+    return 0; // Fallback count
   }
 
   // Add more chess-related API methods here

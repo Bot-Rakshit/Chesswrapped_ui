@@ -4,9 +4,12 @@ import { cn } from "@/utils";
 import { MultiStepLoader } from "../ui/multi-step-loader";
 import { IconShare3, IconDownload } from '@tabler/icons-react';
 import type { PlayerData } from '@/types';
+import type { ChessWrappedResponse } from '@/types/api.types';
 import { Avatar } from '@/components/ui/avatar';
 import { CountryFlag } from '../ui/country-flag';
 import html2canvas from 'html2canvas';
+import { ChessService } from '@/services/chess.service';
+import { ChessInNumbersCard } from './ChessInNumbersCard';
 
 const loadingStates = [
   { text: "Connecting to Chess.com..." },
@@ -42,7 +45,7 @@ const storyCards: StoryCard[] = [
     background: "bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700",
     pattern: "radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 1%, transparent 1%) 0 0/8px 8px",
     title: "Your Chess Journey",
-    subtitle: "2023 in Numbers",
+    subtitle: "2024 in Numbers",
     decorations: [
       { type: "pawn", position: "top-[10%] left-[10%] w-16 opacity-20" },
       { type: "knight", position: "bottom-[15%] right-[10%] w-24 opacity-15" },
@@ -233,11 +236,39 @@ const captureStyles = `
   }
 `;
 
-export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) => {
+export const ChessWrappedStory = ({ 
+  playerData,
+  wrappedData: initialWrappedData 
+}: { 
+  playerData: PlayerData;
+  wrappedData: ChessWrappedResponse | null;
+}) => {
   const [loading, setLoading] = useState(true);
+  const [wrappedData, setWrappedData] = useState<ChessWrappedResponse | null>(initialWrappedData);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [storyComplete, setStoryComplete] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // Load wrapped data only if not provided
+  useEffect(() => {
+    const loadWrappedData = async () => {
+      if (initialWrappedData) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await ChessService.getWrapped(playerData.username);
+        setWrappedData(response);
+        setLoading(false);
+      } catch (err) {
+        console.error('Failed to load wrapped data:', err);
+        setLoading(false);
+      }
+    };
+
+    loadWrappedData();
+  }, [initialWrappedData, playerData.username]);
 
   // Convert current card to image
   const captureCard = async () => {
@@ -452,9 +483,51 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
     }
   }, [storyComplete]);
 
-  if (loading) {
+  if (loading || !wrappedData) {
     return <MultiStepLoader loadingStates={loadingStates} loading={loading} duration={2000} />;
   }
+
+  // Prepare data for ChessInNumbersCard
+  const formatBreakdown = {
+    rapid: {
+      count: wrappedData.intro.formatBreakdown.rapid.count,
+      percentage: wrappedData.intro.formatBreakdown.rapid.percentage
+    },
+    blitz: {
+      count: wrappedData.intro.formatBreakdown.blitz.count,
+      percentage: wrappedData.intro.formatBreakdown.blitz.percentage
+    },
+    bullet: {
+      count: wrappedData.intro.formatBreakdown.bullet.count,
+      percentage: wrappedData.intro.formatBreakdown.bullet.percentage
+    }
+  };
+
+  // Render story content based on current card
+  const renderCardContent = (card: StoryCard) => {
+    switch (card.id) {
+      case "games-played":
+        return (
+          <ChessInNumbersCard
+            username={playerData.username}
+            totalGames={wrappedData.intro.totalGames}
+            formatBreakdown={formatBreakdown}
+          />
+        );
+      // Add other cases for different cards
+      default:
+        return (
+          <div className="text-center mb-8">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">
+              {card.title}
+            </h1>
+            <p className="text-lg sm:text-xl md:text-2xl text-white/80">
+              {card.subtitle}
+            </p>
+          </div>
+        );
+    }
+  };
 
   if (storyComplete) {
     return (
@@ -556,21 +629,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
                     {/* Card content */}
                     <div className="relative z-10 h-full flex flex-col items-center justify-center p-8">
-                      {/* Title */}
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="text-center mb-8"
-                      >
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">
-                          {storyCards[currentCardIndex].title}
-                        </h1>
-                        <p className="text-lg sm:text-xl md:text-2xl text-white/80">
-                          {storyCards[currentCardIndex].subtitle}
-                        </p>
-                      </motion.div>
-
+                      {renderCardContent(storyCards[currentCardIndex])}
                       {/* Decorative elements */}
                       <Decorations decorations={storyCards[currentCardIndex].decorations} />
                     </div>
