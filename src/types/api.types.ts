@@ -349,17 +349,125 @@ export interface ChessWrapped {
   miscStats: MiscStats;
 }
 
-export interface ChessWrappedResponse extends ChessWrapped {
-  quirkyComments?: {
-    comments: {
-      intro?: string;
-      monthlyGames?: string;
-      ratings?: string;
-      playingPatterns?: string;
-      openings?: string;
-      miscStats?: string;
+export interface ChessWrappedResponse {
+  intro: {
+    totalGames: number;
+    formatBreakdown: {
+      rapid: { count: number; percentage: number };
+      blitz: { count: number; percentage: number };
+      bullet: { count: number; percentage: number };
     };
-    tokensUsed: number;
+    longestStreak: {
+      days: number;
+      startDate: string;
+      endDate: string;
+    };
+    longestBreak: {
+      days: number;
+      startDate: string;
+      endDate: string;
+    };
+    mostGamesInDay: {
+      date: string;
+      count: number;
+    };
+    favoriteFormat: {
+      format: string;
+      gamesPlayed: number;
+      winRate: number;
+    };
+  };
+  monthlyGames: {
+    distribution: Array<{
+      month: string;
+      rapid: number;
+      blitz: number;
+      bullet: number;
+      total: number;
+    }>;
+  };
+  ratingHistory: {
+    rapid: Array<{
+      date: string;
+      rating: number;
+    }>;
+    blitz: Array<{
+      date: string;
+      rating: number;
+    }>;
+    bullet: Array<{
+      date: string;
+      rating: number;
+    }>;
+  };
+  formatStats: {
+    rapid: {
+      results: {
+        wins: number;
+        draws: number;
+        losses: number;
+        timeouts: number;
+        abandoned: number;
+      };
+      bestWin: {
+        opponentName: string;
+        opponentRating: number;
+        date: string;
+      };
+      worstLoss: {
+        opponentName: string;
+        opponentRating: number;
+        date: string;
+      };
+    };
+    blitz: {
+      results: {
+        wins: number;
+        draws: number;
+        losses: number;
+        timeouts: number;
+        abandoned: number;
+      };
+      bestWin: {
+        opponentName: string;
+        opponentRating: number;
+        date: string;
+      };
+      worstLoss: {
+        opponentName: string;
+        opponentRating: number;
+        date: string;
+      };
+    };
+    bullet: {
+      results: {
+        wins: number;
+        draws: number;
+        losses: number;
+        timeouts: number;
+        abandoned: number;
+      };
+      bestWin: {
+        opponentName: string;
+        opponentRating: number;
+        date: string;
+      };
+      worstLoss: {
+        opponentName: string;
+        opponentRating: number;
+        date: string;
+      };
+    };
+  };
+  performance: {
+    accuracy: {
+      overall: number | null;
+      byFormat: {
+        rapid: number | null;
+        blitz: number | null;
+        bullet: number | null;
+      };
+    };
   };
 }
 

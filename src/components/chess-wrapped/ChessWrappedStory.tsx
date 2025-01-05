@@ -12,6 +12,8 @@ import { ChessService } from '@/services/chess.service';
 import { ChessInNumbersCard } from './ChessInNumbersCard';
 import { MonthlyStatsCard } from './MonthlyStatsCard';
 import { MonthlyStatsCardPart2 } from './MonthlyStatsCardPart2';
+import { FormatStatsCard } from './FormatStatsCard';
+import { FormatStatsCardPart2 } from './FormatStatsCardPart2';
 
 const loadingStates = [
   { text: "Connecting to Chess.com..." },
@@ -76,59 +78,73 @@ const storyCards: StoryCard[] = [
       { type: "board", position: "bottom-[20%] left-[10%] w-32 opacity-10" },
     ]
   },
+  // Rapid format cards
   {
-    id: "favorite-opening",
-    background: "bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700",
-    pattern: "linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent) 0 0/20px 20px",
-    title: "Opening Mastery",
-    subtitle: "Your Signature Moves",
+    id: "rapid-stats-1",
+    background: "bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700",
+    pattern: "radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 1%, transparent 1%) 0 0/8px 8px",
+    title: "Rapid Games",
+    subtitle: "Rating Progress",
     decorations: [
-      { type: "bishop", position: "top-[15%] right-[15%] w-20 opacity-20" },
+      { type: "queen", position: "top-[15%] right-[15%] w-20 opacity-20" },
       { type: "board", position: "bottom-[20%] left-[10%] w-32 opacity-10" },
     ]
   },
   {
-    id: "win-rate",
+    id: "rapid-stats-2",
     background: "bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700",
-    pattern: "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15) 1px, transparent 1px) 0 0/15px 15px",
-    title: "Victory Road",
-    subtitle: "Your Winning Moments",
+    pattern: "radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 1%, transparent 1%) 0 0/8px 8px",
+    title: "Rapid Games",
+    subtitle: "Performance Analysis",
     decorations: [
-      { type: "queen", position: "bottom-[10%] right-[10%] w-28 opacity-20" },
-      { type: "crown", position: "top-[15%] left-[15%] w-16 opacity-15" },
+      { type: "queen", position: "top-[15%] right-[15%] w-20 opacity-20" },
+      { type: "board", position: "bottom-[20%] left-[10%] w-32 opacity-10" },
+    ]
+  },
+  // Blitz format cards
+  {
+    id: "blitz-stats-1",
+    background: "bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700",
+    pattern: "radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 1%, transparent 1%) 0 0/8px 8px",
+    title: "Blitz Games",
+    subtitle: "Rating Progress",
+    decorations: [
+      { type: "knight", position: "top-[15%] right-[15%] w-20 opacity-20" },
+      { type: "clock", position: "bottom-[20%] left-[10%] w-16 opacity-15" },
     ]
   },
   {
-    id: "best-game",
-    background: "bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700",
-    pattern: "linear-gradient(0deg, rgba(255,255,255,0.1) 1px, transparent 1px) 0 0/20px 20px, linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px) 0 0/20px 20px",
-    title: "Brilliant Moves",
-    subtitle: "Your Best Games",
+    id: "blitz-stats-2",
+    background: "bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700",
+    pattern: "radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 1%, transparent 1%) 0 0/8px 8px",
+    title: "Blitz Games",
+    subtitle: "Performance Analysis",
     decorations: [
-      { type: "rook", position: "top-[20%] right-[20%] w-20 opacity-20" },
-      { type: "sparkles", position: "bottom-[15%] left-[15%]" },
+      { type: "knight", position: "top-[15%] right-[15%] w-20 opacity-20" },
+      { type: "clock", position: "bottom-[20%] left-[10%] w-16 opacity-15" },
     ]
   },
+  // Bullet format cards
   {
-    id: "rating-progress",
+    id: "bullet-stats-1",
     background: "bg-gradient-to-br from-rose-500 via-rose-600 to-rose-700",
-    pattern: "radial-gradient(circle at 0% 0%, rgba(255,255,255,0.2) 1px, transparent 1px) 0 0/20px 20px",
-    title: "Rating Journey",
-    subtitle: "Your Progress",
+    pattern: "radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 1%, transparent 1%) 0 0/8px 8px",
+    title: "Bullet Games",
+    subtitle: "Rating Progress",
     decorations: [
-      { type: "graph", position: "center" },
-      { type: "king", position: "top-[10%] right-[10%] w-24 opacity-15" },
+      { type: "rook", position: "top-[15%] right-[15%] w-20 opacity-20" },
+      { type: "hourglass", position: "bottom-[20%] left-[10%] w-16 opacity-15" },
     ]
   },
   {
-    id: "time-control",
-    background: "bg-gradient-to-br from-cyan-500 via-cyan-600 to-cyan-700",
-    pattern: "linear-gradient(45deg, rgba(255,255,255,0.1) 2px, transparent 2px) 0 0/10px 10px",
-    title: "Time Control",
-    subtitle: "Your Game Pace",
+    id: "bullet-stats-2",
+    background: "bg-gradient-to-br from-rose-500 via-rose-600 to-rose-700",
+    pattern: "radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 1%, transparent 1%) 0 0/8px 8px",
+    title: "Bullet Games",
+    subtitle: "Performance Analysis",
     decorations: [
-      { type: "clock", position: "top-[15%] left-[15%] w-20 opacity-20" },
-      { type: "hourglass", position: "bottom-[20%] right-[20%] w-16 opacity-15" },
+      { type: "rook", position: "top-[15%] right-[15%] w-20 opacity-20" },
+      { type: "hourglass", position: "bottom-[20%] left-[10%] w-16 opacity-15" },
     ]
   },
 ];
@@ -529,6 +545,47 @@ export const ChessWrappedStory = ({
 
   // Render story content based on current card
   const renderCardContent = (card: StoryCard) => {
+    // Calculate total games
+    const totalGames = wrappedData.intro.totalGames;
+    
+    // Function to check if format should be shown
+    const shouldShowFormat = (formatGames: number, rating: number | null) => {
+      return rating !== null && (formatGames >= 15 || (formatGames / totalGames) * 100 >= 10);
+    };
+
+    // Create mock data for format stats until API is updated
+    const mockFormatStats = (format: 'rapid' | 'blitz' | 'bullet') => ({
+      results: {
+        wins: wrappedData.intro.formatBreakdown[format].count * 0.5,
+        draws: wrappedData.intro.formatBreakdown[format].count * 0.1,
+        losses: wrappedData.intro.formatBreakdown[format].count * 0.3,
+        timeouts: wrappedData.intro.formatBreakdown[format].count * 0.05,
+        abandoned: wrappedData.intro.formatBreakdown[format].count * 0.05,
+      },
+      bestWin: {
+        opponentName: "Player1",
+        opponentRating: 1500,
+        date: "2024-01-15",
+      },
+      worstLoss: {
+        opponentName: "Player2",
+        opponentRating: 1200,
+        date: "2024-02-01",
+      }
+    });
+
+    // Create mock rating history until API is updated
+    const mockRatingHistory = (rating: number) => {
+      const history = [];
+      for (let i = 0; i < 12; i++) {
+        history.push({
+          date: `2024-${String(i + 1).padStart(2, '0')}-01`,
+          rating: rating + Math.floor(Math.random() * 200 - 100)
+        });
+      }
+      return history;
+    };
+
     switch (card.id) {
       case "games-played":
         return (
@@ -558,6 +615,84 @@ export const ChessWrappedStory = ({
             favoriteFormat={wrappedData.intro.favoriteFormat}
           />
         );
+      case "rapid-stats-1":
+        if (shouldShowFormat(wrappedData.intro.formatBreakdown.rapid.count, playerData.ratings.rapid)) {
+          return (
+            <FormatStatsCard
+              username={playerData.username}
+              format="rapid"
+              currentRating={playerData.ratings.rapid!}
+              ratingHistory={mockRatingHistory(playerData.ratings.rapid!)}
+            />
+          );
+        }
+        return null;
+      case "rapid-stats-2":
+        if (shouldShowFormat(wrappedData.intro.formatBreakdown.rapid.count, playerData.ratings.rapid)) {
+          return (
+            <FormatStatsCardPart2
+              username={playerData.username}
+              format="rapid"
+              results={mockFormatStats('rapid').results}
+              bestWin={mockFormatStats('rapid').bestWin}
+              worstLoss={mockFormatStats('rapid').worstLoss}
+              accuracy={wrappedData.performance?.accuracy?.byFormat?.rapid ?? null}
+            />
+          );
+        }
+        return null;
+      case "blitz-stats-1":
+        if (shouldShowFormat(wrappedData.intro.formatBreakdown.blitz.count, playerData.ratings.blitz)) {
+          return (
+            <FormatStatsCard
+              username={playerData.username}
+              format="blitz"
+              currentRating={playerData.ratings.blitz!}
+              ratingHistory={mockRatingHistory(playerData.ratings.blitz!)}
+            />
+          );
+        }
+        return null;
+      case "blitz-stats-2":
+        if (shouldShowFormat(wrappedData.intro.formatBreakdown.blitz.count, playerData.ratings.blitz)) {
+          return (
+            <FormatStatsCardPart2
+              username={playerData.username}
+              format="blitz"
+              results={mockFormatStats('blitz').results}
+              bestWin={mockFormatStats('blitz').bestWin}
+              worstLoss={mockFormatStats('blitz').worstLoss}
+              accuracy={wrappedData.performance?.accuracy?.byFormat?.blitz ?? null}
+            />
+          );
+        }
+        return null;
+      case "bullet-stats-1":
+        if (shouldShowFormat(wrappedData.intro.formatBreakdown.bullet.count, playerData.ratings.bullet)) {
+          return (
+            <FormatStatsCard
+              username={playerData.username}
+              format="bullet"
+              currentRating={playerData.ratings.bullet!}
+              ratingHistory={mockRatingHistory(playerData.ratings.bullet!)}
+            />
+          );
+        }
+        return null;
+      case "bullet-stats-2":
+        if (shouldShowFormat(wrappedData.intro.formatBreakdown.bullet.count, playerData.ratings.bullet)) {
+          return (
+            <FormatStatsCardPart2
+              username={playerData.username}
+              format="bullet"
+              results={mockFormatStats('bullet').results}
+              bestWin={mockFormatStats('bullet').bestWin}
+              worstLoss={mockFormatStats('bullet').worstLoss}
+              accuracy={wrappedData.performance?.accuracy?.byFormat?.bullet ?? null}
+            />
+          );
+        }
+        return null;
       // Add other cases for different cards
       default:
         return (
