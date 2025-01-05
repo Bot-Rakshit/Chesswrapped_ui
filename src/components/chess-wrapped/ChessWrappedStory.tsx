@@ -296,7 +296,9 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
   }, []);
 
   // Handle close
-  const handleClose = () => {
+  const handleClose = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     console.log('Close button clicked'); // Debug log
     setStoryComplete(true);
   };
@@ -345,7 +347,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
   // Handle click navigation
   const handleScreenClick = (e: React.MouseEvent) => {
     // Don't trigger navigation if clicking on buttons or if story is complete
-    if ((e.target as HTMLElement).closest('button') || storyComplete) {
+    if ((e.target as HTMLElement).closest('button')) {
       return;
     }
 
@@ -549,21 +551,21 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
             maxHeight: 'calc(100vw * 16/9)'
           }}
         >
-          {/* Close button - Moved outside the story container for better click handling */}
-          <button
-            onClick={handleClose}
-            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 active:bg-white/30 z-[60] hide-in-capture cursor-pointer"
-          >
-            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
           {/* Story Container */}
           <div 
             className="relative w-full h-full"
             onClick={handleScreenClick}
           >
+            {/* Close button - Moved outside AnimatePresence for better click handling */}
+            <button
+              onClick={handleClose}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 active:bg-white/30 z-[150] hide-in-capture cursor-pointer"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentCardIndex}
