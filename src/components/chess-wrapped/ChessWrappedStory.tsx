@@ -343,12 +343,15 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
   // Handle click navigation
   const handleScreenClick = (e: React.MouseEvent) => {
-    // Don't trigger navigation if clicking on buttons or close button
+    // Get the clicked element
     const target = e.target as HTMLElement;
+    
+    // If clicking on any interactive element, don't handle navigation
     if (
-      target.closest('button') || 
-      target.closest('[data-close-button]') ||
-      target.hasAttribute('data-close-button')
+      target.closest('button') ||
+      target.closest('a') ||
+      target.closest('[role="button"]') ||
+      target.closest('[data-interactive]')
     ) {
       return;
     }
@@ -518,188 +521,187 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
   }
 
   return (
-    <div className="fixed inset-0 bg-black z-[100] flex items-center justify-center">
-      {/* Close button - Updated styles and data attribute */}
-      <div 
-        className="fixed top-4 right-4 z-[1001]" 
-        data-close-button
-        onClick={(e) => {
-          e.stopPropagation();
-          handleClose();
-        }}
+    <div className="fixed inset-0 bg-black z-[100]">
+      {/* Close button - Moved outside the story container */}
+      <button
+        onClick={handleClose}
+        className="fixed top-4 right-4 z-[1001] w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
+        style={{ touchAction: 'manipulation' }}
       >
-        <button
-          className="w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
-        >
-          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
+        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
 
-      <div className="relative flex items-center h-full">
-        {/* Previous button - only on desktop */}
-        <div className="hidden md:block mr-8 hide-in-capture">
-          <button
-            onClick={handlePrevious}
-            className={cn(
-              "w-12 h-12 rounded-full flex items-center justify-center",
-              "bg-white/10 backdrop-blur-sm",
-              "transition-all duration-200",
-              "hover:bg-white/20 active:bg-white/30",
-              currentCardIndex === 0 ? "opacity-0 pointer-events-none" : "opacity-100"
-            )}
-          >
-            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-        </div>
+      {/* Story container */}
+      <div 
+        className="h-full flex items-center justify-center"
+        onClick={handleScreenClick}
+      >
+        <div className="relative flex items-center h-full">
+          {/* Previous button - only on desktop */}
+          <div className="hidden md:block mr-8 hide-in-capture">
+            <button
+              onClick={handlePrevious}
+              className={cn(
+                "w-12 h-12 rounded-full flex items-center justify-center",
+                "bg-white/10 backdrop-blur-sm",
+                "transition-all duration-200",
+                "hover:bg-white/20 active:bg-white/30",
+                currentCardIndex === 0 ? "opacity-0 pointer-events-none" : "opacity-100"
+              )}
+            >
+              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          </div>
 
-        {/* Phone-like container */}
-        <div 
-          ref={cardRef}
-          className="w-full h-full md:w-[375px] md:h-[667px] md:rounded-[40px] md:shadow-2xl relative bg-black overflow-hidden"
-          style={{ 
-            height: '100dvh',
-            aspectRatio: '9/16',
-            maxHeight: 'calc(100vw * 16/9)'
-          }}
-        >
-          {/* Story Container */}
+          {/* Phone-like container */}
           <div 
-            className="relative w-full h-full"
-            onClick={handleScreenClick}
+            ref={cardRef}
+            className="w-full h-full md:w-[375px] md:h-[667px] md:rounded-[40px] md:shadow-2xl relative bg-black overflow-hidden"
+            style={{ 
+              height: '100dvh',
+              aspectRatio: '9/16',
+              maxHeight: 'calc(100vw * 16/9)'
+            }}
           >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentCardIndex}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-                className="w-full h-full"
-              >
-                <div 
-                  className={cn(
-                    "w-full h-full relative card-content",
-                    storyCards[currentCardIndex].background
-                  )}
+            {/* Story Container */}
+            <div 
+              className="relative w-full h-full"
+              onClick={handleScreenClick}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentCardIndex}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full h-full"
                 >
-                  {/* Pattern overlay */}
                   <div 
-                    className="absolute inset-0 opacity-30"
-                    style={{ backgroundImage: storyCards[currentCardIndex].pattern }}
-                  />
+                    className={cn(
+                      "w-full h-full relative card-content",
+                      storyCards[currentCardIndex].background
+                    )}
+                  >
+                    {/* Pattern overlay */}
+                    <div 
+                      className="absolute inset-0 opacity-30"
+                      style={{ backgroundImage: storyCards[currentCardIndex].pattern }}
+                    />
 
-                  {/* Card content */}
-                  <div className="relative z-10 h-full flex flex-col items-center justify-center p-8">
-                    {/* Title */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="text-center mb-8"
-                    >
-                      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">
-                        {storyCards[currentCardIndex].title}
-                      </h1>
-                      <p className="text-lg sm:text-xl md:text-2xl text-white/80">
-                        {storyCards[currentCardIndex].subtitle}
-                      </p>
-                    </motion.div>
-
-                    {/* Decorative elements */}
-                    <Decorations decorations={storyCards[currentCardIndex].decorations} />
-                  </div>
-
-                  {/* Navigation buttons - only visible on mobile */}
-                  <div className="md:hidden absolute inset-x-0 top-0 h-full flex items-center justify-between px-4 pointer-events-none hide-in-capture">
-                    <button
-                      onClick={handlePrevious}
-                      className={cn(
-                        "w-12 h-12 rounded-full flex items-center justify-center pointer-events-auto",
-                        "bg-white/10 backdrop-blur-sm",
-                        "transition-opacity duration-200",
-                        currentCardIndex === 0 ? "opacity-0 pointer-events-none" : "opacity-100"
-                      )}
-                    >
-                      <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={handleNext}
-                      className={cn(
-                        "w-12 h-12 rounded-full flex items-center justify-center pointer-events-auto",
-                        "bg-white/10 backdrop-blur-sm",
-                        "transition-opacity duration-200",
-                        currentCardIndex === storyCards.length - 1 ? "opacity-0 pointer-events-none" : "opacity-100"
-                      )}
-                    >
-                      <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  {/* Progress bar */}
-                  <div className="absolute top-0 inset-x-0 flex gap-1 p-2 hide-in-capture">
-                    {storyCards.map((_, idx) => (
-                      <div
-                        key={idx}
-                        className="flex-1 h-1 rounded-full overflow-hidden bg-white/20"
+                    {/* Card content */}
+                    <div className="relative z-10 h-full flex flex-col items-center justify-center p-8">
+                      {/* Title */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-center mb-8"
                       >
-                        <motion.div
-                          initial={{ width: "0%" }}
-                          animate={{ width: idx <= currentCardIndex ? "100%" : "0%" }}
-                          transition={{ duration: 0.3 }}
-                          className="h-full bg-white"
-                        />
-                      </div>
-                    ))}
-                  </div>
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">
+                          {storyCards[currentCardIndex].title}
+                        </h1>
+                        <p className="text-lg sm:text-xl md:text-2xl text-white/80">
+                          {storyCards[currentCardIndex].subtitle}
+                        </p>
+                      </motion.div>
 
-                  {/* Share/Download buttons */}
-                  <div className="absolute bottom-4 right-4 flex items-center gap-2 z-[200] hide-in-capture">
-                    {/* Only show share on mobile */}
-                    <div className="md:hidden">
+                      {/* Decorative elements */}
+                      <Decorations decorations={storyCards[currentCardIndex].decorations} />
+                    </div>
+
+                    {/* Navigation buttons - only visible on mobile */}
+                    <div className="md:hidden absolute inset-x-0 top-0 h-full flex items-center justify-between px-4 pointer-events-none hide-in-capture">
                       <button
-                        onClick={(e) => handleShare(storyCards[currentCardIndex], e)}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
+                        onClick={handlePrevious}
+                        className={cn(
+                          "w-12 h-12 rounded-full flex items-center justify-center pointer-events-auto",
+                          "bg-white/10 backdrop-blur-sm",
+                          "transition-opacity duration-200",
+                          currentCardIndex === 0 ? "opacity-0 pointer-events-none" : "opacity-100"
+                        )}
                       >
-                        <IconShare3 className="w-4 h-4" />
+                        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={handleNext}
+                        className={cn(
+                          "w-12 h-12 rounded-full flex items-center justify-center pointer-events-auto",
+                          "bg-white/10 backdrop-blur-sm",
+                          "transition-opacity duration-200",
+                          currentCardIndex === storyCards.length - 1 ? "opacity-0 pointer-events-none" : "opacity-100"
+                        )}
+                      >
+                        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
                       </button>
                     </div>
-                    <button
-                      onClick={(e) => handleDownload(storyCards[currentCardIndex], e)}
-                      className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
-                    >
-                      <IconDownload className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
 
-        {/* Next button - only on desktop */}
-        <div className="hidden md:block ml-8 hide-in-capture">
-          <button
-            onClick={handleNext}
-            className={cn(
-              "w-12 h-12 rounded-full flex items-center justify-center",
-              "bg-white/10 backdrop-blur-sm",
-              "transition-all duration-200",
-              "hover:bg-white/20 active:bg-white/30",
-              currentCardIndex === storyCards.length - 1 ? "opacity-0 pointer-events-none" : "opacity-100"
-            )}
-          >
-            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+                    {/* Progress bar */}
+                    <div className="absolute top-0 inset-x-0 flex gap-1 p-2 hide-in-capture">
+                      {storyCards.map((_, idx) => (
+                        <div
+                          key={idx}
+                          className="flex-1 h-1 rounded-full overflow-hidden bg-white/20"
+                        >
+                          <motion.div
+                            initial={{ width: "0%" }}
+                            animate={{ width: idx <= currentCardIndex ? "100%" : "0%" }}
+                            transition={{ duration: 0.3 }}
+                            className="h-full bg-white"
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Share/Download buttons */}
+                    <div className="absolute bottom-4 right-4 flex items-center gap-2 z-[200] hide-in-capture">
+                      {/* Only show share on mobile */}
+                      <div className="md:hidden">
+                        <button
+                          onClick={(e) => handleShare(storyCards[currentCardIndex], e)}
+                          className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
+                        >
+                          <IconShare3 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <button
+                        onClick={(e) => handleDownload(storyCards[currentCardIndex], e)}
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
+                      >
+                        <IconDownload className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Next button - only on desktop */}
+          <div className="hidden md:block ml-8 hide-in-capture">
+            <button
+              onClick={handleNext}
+              className={cn(
+                "w-12 h-12 rounded-full flex items-center justify-center",
+                "bg-white/10 backdrop-blur-sm",
+                "transition-all duration-200",
+                "hover:bg-white/20 active:bg-white/30",
+                currentCardIndex === storyCards.length - 1 ? "opacity-0 pointer-events-none" : "opacity-100"
+              )}
+            >
+              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
