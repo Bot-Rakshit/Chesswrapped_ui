@@ -11,6 +11,7 @@ import html2canvas from 'html2canvas';
 import { ChessService } from '@/services/chess.service';
 import { ChessInNumbersCard } from './ChessInNumbersCard';
 import { MonthlyStatsCard } from './MonthlyStatsCard';
+import { MonthlyStatsCardPart2 } from './MonthlyStatsCardPart2';
 
 const loadingStates = [
   { text: "Connecting to Chess.com..." },
@@ -54,13 +55,24 @@ const storyCards: StoryCard[] = [
     ]
   },
   {
-    id: "monthly-stats",
+    id: "monthly-stats-1",
     background: "bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700",
     pattern: "linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent) 0 0/20px 20px",
     title: "Monthly Breakdown",
-    subtitle: "Your Gaming Patterns",
+    subtitle: "First Half of Your Journey",
     decorations: [
       { type: "bishop", position: "top-[15%] right-[15%] w-20 opacity-20" },
+      { type: "board", position: "bottom-[20%] left-[10%] w-32 opacity-10" },
+    ]
+  },
+  {
+    id: "monthly-stats-2",
+    background: "bg-gradient-to-br from-orange-500 via-orange-600 to-orange-700",
+    pattern: "linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent) 0 0/20px 20px",
+    title: "Monthly Breakdown",
+    subtitle: "Second Half of Your Journey",
+    decorations: [
+      { type: "queen", position: "top-[15%] right-[15%] w-20 opacity-20" },
       { type: "board", position: "bottom-[20%] left-[10%] w-32 opacity-10" },
     ]
   },
@@ -526,13 +538,24 @@ export const ChessWrappedStory = ({
             formatBreakdown={formatBreakdown}
           />
         );
-      case "monthly-stats":
+      case "monthly-stats-1":
         return (
           <MonthlyStatsCard
             username={playerData.username}
             monthlyDistribution={wrappedData.monthlyGames.distribution}
             longestStreak={wrappedData.intro.longestStreak}
             longestBreak={wrappedData.intro.longestBreak}
+          />
+        );
+      case "monthly-stats-2":
+        return (
+          <MonthlyStatsCardPart2
+            username={playerData.username}
+            monthlyDistribution={wrappedData.monthlyGames.distribution}
+            longestStreak={wrappedData.intro.longestStreak}
+            longestBreak={wrappedData.intro.longestBreak}
+            mostGamesInDay={wrappedData.intro.mostGamesInDay}
+            favoriteFormat={wrappedData.intro.favoriteFormat}
           />
         );
       // Add other cases for different cards

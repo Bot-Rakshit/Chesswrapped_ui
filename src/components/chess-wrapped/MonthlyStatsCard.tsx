@@ -20,6 +20,15 @@ export interface MonthlyStatsCardProps {
     startDate: string;
     endDate: string;
   };
+  mostGamesInDay?: {
+    date: string;
+    count: number;
+  };
+  favoriteFormat?: {
+    format: string;
+    gamesPlayed: number;
+    winRate: number;
+  };
 }
 
 export const MonthlyStatsCard: React.FC<MonthlyStatsCardProps> = ({
@@ -110,14 +119,14 @@ export const MonthlyStatsCard: React.FC<MonthlyStatsCardProps> = ({
   );
 
   return (
-    <div className="w-full max-w-lg mx-auto relative z-50">
+    <div className="w-full max-w-lg mx-auto relative z-50 pt-8 sm:pt-0">
       {/* Header */}
-      <div className="text-center mb-6 relative z-50">
+      <div className="text-center mb-4 sm:mb-6 relative z-50">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-2 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
+          className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
         >
           Monthly Activity
         </motion.h1>
@@ -125,7 +134,7 @@ export const MonthlyStatsCard: React.FC<MonthlyStatsCardProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-lg sm:text-xl md:text-2xl font-bold text-orange-300 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
+          className="text-base sm:text-lg md:text-xl font-bold text-orange-300 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
         >
           First Half of Your Journey
         </motion.p>
@@ -136,7 +145,7 @@ export const MonthlyStatsCard: React.FC<MonthlyStatsCardProps> = ({
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.4 }}
-        className="text-center mb-6 relative z-50"
+        className="text-center mb-4 sm:mb-6 relative z-50"
       >
         <div className="inline-block w-full px-4 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-yellow-500 border-2 border-orange-400 shadow-[0_0_20px_rgba(0,0,0,0.3)]">
           <div className="grid grid-cols-2 gap-3">

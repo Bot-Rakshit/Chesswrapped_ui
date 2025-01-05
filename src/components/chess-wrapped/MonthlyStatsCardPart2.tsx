@@ -6,10 +6,17 @@ type MonthlyData = MonthlyStatsCardProps['monthlyDistribution'][0];
 
 export const MonthlyStatsCardPart2: React.FC<MonthlyStatsCardProps> = ({
   username,
-  monthlyDistribution
+  monthlyDistribution,
+  mostGamesInDay,
+  favoriteFormat
 }) => {
   // Get second 6 months only
   const secondHalf = monthlyDistribution.slice(6, 12);
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
 
   const MonthCard = ({ month, index }: { month: MonthlyData; index: number }) => (
     month.total > 0 && (
@@ -85,14 +92,14 @@ export const MonthlyStatsCardPart2: React.FC<MonthlyStatsCardProps> = ({
   );
 
   return (
-    <div className="w-full max-w-lg mx-auto relative z-50">
+    <div className="w-full max-w-lg mx-auto relative z-50 pt-8 sm:pt-0">
       {/* Header */}
-      <div className="text-center mb-6 relative z-50">
+      <div className="text-center mb-4 sm:mb-6 relative z-50">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-2 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
+          className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
         >
           Monthly Activity
         </motion.h1>
@@ -100,11 +107,52 @@ export const MonthlyStatsCardPart2: React.FC<MonthlyStatsCardProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-lg sm:text-xl md:text-2xl font-bold text-orange-300 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
+          className="text-base sm:text-lg md:text-xl font-bold text-orange-300 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
         >
           Second Half of Your Journey
         </motion.p>
       </div>
+
+      {/* Stats Cards */}
+      <motion.div 
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="text-center mb-4 sm:mb-6 relative z-50"
+      >
+        <div className="inline-block w-full px-4 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-yellow-500 border-2 border-orange-400 shadow-[0_0_20px_rgba(0,0,0,0.3)]">
+          <div className="grid grid-cols-2 gap-3">
+            {/* Most Games in a Day */}
+            {mostGamesInDay && (
+              <div className="text-center">
+                <div className="text-4xl sm:text-5xl font-black text-white mb-1 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
+                  {mostGamesInDay.count}
+                </div>
+                <div className="text-base font-bold text-white/90">
+                  Most Games
+                </div>
+                <div className="text-xs text-white/80">
+                  {formatDate(mostGamesInDay.date)}
+                </div>
+              </div>
+            )}
+            {/* Favorite Format */}
+            {favoriteFormat && (
+              <div className="text-center">
+                <div className="text-4xl sm:text-5xl font-black text-white mb-1 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
+                  {favoriteFormat.winRate}%
+                </div>
+                <div className="text-base font-bold text-white/90">
+                  {favoriteFormat.format.charAt(0).toUpperCase() + favoriteFormat.format.slice(1)} Win Rate
+                </div>
+                <div className="text-xs text-white/80">
+                  {favoriteFormat.gamesPlayed} games
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </motion.div>
 
       {/* Second Half of the Year */}
       <div className="space-y-4">
