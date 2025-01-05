@@ -10,6 +10,7 @@ import { CountryFlag } from '../ui/country-flag';
 import html2canvas from 'html2canvas';
 import { ChessService } from '@/services/chess.service';
 import { ChessInNumbersCard } from './ChessInNumbersCard';
+import { MonthlyStatsCard } from './MonthlyStatsCard';
 
 const loadingStates = [
   { text: "Connecting to Chess.com..." },
@@ -50,6 +51,17 @@ const storyCards: StoryCard[] = [
       { type: "pawn", position: "top-[10%] left-[10%] w-16 opacity-20" },
       { type: "knight", position: "bottom-[15%] right-[10%] w-24 opacity-15" },
       { type: "dots", position: "top-[20%] right-[20%]" },
+    ]
+  },
+  {
+    id: "monthly-stats",
+    background: "bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700",
+    pattern: "linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent) 0 0/20px 20px",
+    title: "Monthly Breakdown",
+    subtitle: "Your Gaming Patterns",
+    decorations: [
+      { type: "bishop", position: "top-[15%] right-[15%] w-20 opacity-20" },
+      { type: "board", position: "bottom-[20%] left-[10%] w-32 opacity-10" },
     ]
   },
   {
@@ -512,6 +524,15 @@ export const ChessWrappedStory = ({
             username={playerData.username}
             totalGames={wrappedData.intro.totalGames}
             formatBreakdown={formatBreakdown}
+          />
+        );
+      case "monthly-stats":
+        return (
+          <MonthlyStatsCard
+            username={playerData.username}
+            monthlyDistribution={wrappedData.monthlyGames.distribution}
+            longestStreak={wrappedData.intro.longestStreak}
+            longestBreak={wrappedData.intro.longestBreak}
           />
         );
       // Add other cases for different cards
