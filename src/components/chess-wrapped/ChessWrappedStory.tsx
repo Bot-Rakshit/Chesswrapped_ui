@@ -491,23 +491,18 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
 
                   {/* Share/Download buttons */}
                   <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                    <div className="flex items-center gap-2">
-                      {/* Only show share on mobile */}
-                      <div className="md:hidden flex-1">
-                        <button
-                          onClick={(e) => handleShare(card, e)}
-                          className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 active:bg-white/40"
-                        >
-                          <IconShare3 className="w-4 h-4" />
-                          <span className="md:hidden">Share</span>
-                        </button>
-                      </div>
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={(e) => handleShare(card, e)}
+                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
+                      >
+                        <IconShare3 className="w-5 h-5" />
+                      </button>
                       <button
                         onClick={(e) => handleDownload(card, e)}
-                        className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 active:bg-white/40"
+                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
                       >
-                        <IconDownload className="w-4 h-4" />
-                        <span className="md:hidden">Download</span>
+                        <IconDownload className="w-5 h-5" />
                       </button>
                     </div>
                   </div>
@@ -556,15 +551,17 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
             className="relative w-full h-full"
             onClick={handleScreenClick}
           >
-            {/* Close button - Moved outside AnimatePresence for better click handling */}
-            <button
-              onClick={handleClose}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 active:bg-white/30 z-[150] hide-in-capture cursor-pointer"
-            >
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            {/* Close button - Moved outside story container and increased z-index */}
+            <div className="absolute top-4 right-4 z-[200] hide-in-capture">
+              <button
+                onClick={handleClose}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/40"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
 
             <AnimatePresence mode="wait">
               <motion.div
@@ -656,7 +653,7 @@ export const ChessWrappedStory = ({ playerData }: { playerData: PlayerData }) =>
                   </div>
 
                   {/* Share/Download buttons */}
-                  <div className="absolute bottom-4 right-4 flex items-center gap-2 z-20 hide-in-capture">
+                  <div className="absolute bottom-4 right-4 flex items-center gap-2 z-[200] hide-in-capture">
                     {/* Only show share on mobile */}
                     <div className="md:hidden">
                       <button
