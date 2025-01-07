@@ -24,14 +24,46 @@ export const FormatStatsCard: React.FC<FormatStatsCardProps> = ({
   currentRating,
   ratingHistory,
 }) => {
+  // Sort rating history by date and ensure it's not empty
+  const sortedHistory = React.useMemo(() => {
+    if (!ratingHistory || ratingHistory.length === 0) return [];
+    return [...ratingHistory].sort((a, b) => 
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+  }, [ratingHistory]);
+
   // Calculate rating trends
-  const ratingChange = ratingHistory.length >= 2 
-    ? currentRating - ratingHistory[0].rating
+  const ratingChange = sortedHistory.length >= 2 
+    ? currentRating - sortedHistory[0].rating
     : 0;
   
-  const highestRating = Math.max(...ratingHistory.map(h => h.rating));
-  const lowestRating = Math.min(...ratingHistory.map(h => h.rating));
+  const highestRating = sortedHistory.length > 0
+    ? Math.max(...sortedHistory.map(h => h.rating))
+    : currentRating;
+
+  const lowestRating = sortedHistory.length > 0
+    ? Math.min(...sortedHistory.map(h => h.rating))
+    : currentRating;
+
   const ratingRange = highestRating - lowestRating;
+
+  // Calculate domain padding for better visualization
+  const domainPadding = Math.max(50, Math.round(ratingRange * 0.1));
+  const yDomain = [
+    Math.floor((lowestRating - domainPadding) / 10) * 10,
+    Math.ceil((highestRating + domainPadding) / 10) * 10
+  ];
+
+  // Debug log
+  console.log('Rating History:', {
+    format,
+    sortedHistory,
+    currentRating,
+    highestRating,
+    lowestRating,
+    ratingRange,
+    yDomain
+  });
 
   return (
     <div className="w-full max-w-lg mx-auto relative z-50 pt-8 sm:pt-0">
@@ -63,37 +95,49 @@ export const FormatStatsCard: React.FC<FormatStatsCardProps> = ({
         className="mb-6 bg-black/40 rounded-xl p-4 border border-orange-400/30"
       >
         <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={ratingHistory}>
-              <XAxis 
-                dataKey="date" 
-                tickFormatter={formatDate}
-                stroke="#9CA3AF"
-                fontSize={12}
-              />
-              <YAxis 
-                stroke="#9CA3AF"
-                fontSize={12}
-                domain={[lowestRating - 50, highestRating + 50]}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'rgba(0,0,0,0.8)',
-                  border: '1px solid rgba(249,115,22,0.3)',
-                  borderRadius: '0.5rem',
-                }}
-                labelFormatter={formatDate}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="rating" 
-                stroke="#F97316"
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 4, fill: '#F97316' }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          {sortedHistory.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={sortedHistory}>
+                <XAxis 
+                  dataKey="date" 
+                  tickFormatter={formatDate}
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                  tickMargin={8}
+                  minTickGap={50}
+                />
+                <YAxis 
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                  domain={yDomain}
+                  tickCount={6}
+                  tickFormatter={(value) => Math.round(value).toString()}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    border: '1px solid rgba(249,115,22,0.3)',
+                    borderRadius: '0.5rem',
+                    padding: '8px 12px',
+                  }}
+                  labelFormatter={formatDate}
+                  formatter={(value: number) => [Math.round(value), 'Rating']}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="rating" 
+                  stroke="#F97316"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 4, fill: '#F97316' }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-full flex items-center justify-center">
+              <p className="text-white/60">No rating history available</p>
+            </div>
+          )}
         </div>
       </motion.div>
 

@@ -1,12 +1,31 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { cn } from "../../utils";
+
+const useGridDimensions = (squareSize: number = 50) => {
+  const [dimensions, setDimensions] = useState({ rows: 0, cols: 0 });
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      const cols = Math.ceil(window.innerWidth / squareSize);
+      const rows = Math.ceil(window.innerHeight / squareSize);
+      setDimensions({ rows, cols });
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, [squareSize]);
+
+  return dimensions;
+};
 
 export const BoxesCore = ({ className, ...props }: { className?: string }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const rows = new Array(8).fill(1);
-  const cols = new Array(8).fill(1);
+  const { rows, cols } = useGridDimensions(80); // Increased square size from 40 to 80 pixels
+  const rowsArray = new Array(rows).fill(1);
+  const colsArray = new Array(cols).fill(1);
 
   const handleMouseEnter = useCallback((index: number) => {
     setHoveredIndex(index);
@@ -19,7 +38,7 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
   return (
     <div
       className={cn(
-        "absolute inset-0 w-full h-full bg-transparent flex flex-col pointer-events-none overflow-hidden",
+        "fixed inset-0 w-full h-full bg-transparent pointer-events-none overflow-hidden",
         "before:fixed before:inset-0 before:bg-gradient-to-b before:from-blue-900/30 before:via-blue-800/20 before:to-white/10 before:blur-[120px] before:pointer-events-none",
         "after:fixed after:inset-0 after:bg-gradient-to-tr after:from-white/10 after:via-blue-500/10 after:to-white/10 after:blur-[120px] after:pointer-events-none",
         "perspective-[1000px] select-none touch-none",
@@ -27,20 +46,17 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
       )}
       {...props}
     >
-      <div className="absolute inset-0 w-full h-full">
-        {rows.map((_, i) => (
-          <div
-            key={`row-${i}`}
-            className="w-full h-[calc(100%/8)] flex"
-          >
-            {cols.map((_, j) => {
-              const index = i * cols.length + j;
+      <div className="grid w-full h-full" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+        {rowsArray.map((_, i) => (
+          <React.Fragment key={`row-${i}`}>
+            {colsArray.map((_, j) => {
+              const index = i * cols + j;
               const isHovered = hoveredIndex === index;
               const isEvenSquare = (i + j) % 2 === 0;
               const neighborIndices = [
-                index - cols.length - 1, index - cols.length, index - cols.length + 1,
-                index - 1,                                    index + 1,
-                index + cols.length - 1, index + cols.length, index + cols.length + 1
+                index - cols - 1, index - cols, index - cols + 1,
+                index - 1,                      index + 1,
+                index + cols - 1, index + cols, index + cols + 1
               ];
               const isNeighbor = hoveredIndex !== null && neighborIndices.includes(hoveredIndex);
               const depth = Math.abs(((i + j) % 3) - 1);
@@ -49,7 +65,7 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                 <div
                   key={`col-${j}`}
                   className={cn(
-                    "w-[calc(100%/8)] h-full relative",
+                    "aspect-square w-full relative",
                     "transition-all duration-500 ease-out will-change-transform",
                     "hover:z-50",
                     "pointer-events-auto",
@@ -119,7 +135,7 @@ export const BoxesCore = ({ className, ...props }: { className?: string }) => {
                 </div>
               );
             })}
-          </div>
+          </React.Fragment>
         ))}
       </div>
     </div>

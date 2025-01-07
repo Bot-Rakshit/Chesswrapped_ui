@@ -1,14 +1,31 @@
 import { motion } from 'framer-motion';
 import React from 'react';
-import { MonthlyStatsCardProps } from './MonthlyStatsCard';
 
-type MonthlyData = MonthlyStatsCardProps['monthlyDistribution'][0];
+interface MonthlyStatsCardPart2Props {
+  username: string;
+  monthlyDistribution: Array<{
+    month: number;
+    rapid: number;
+    blitz: number;
+    bullet: number;
+  }>;
+  mostGamesInDay: {
+    date: string;
+    count: number;
+  };
+  favoriteFormat: {
+    type: 'rapid' | 'blitz' | 'bullet';
+    count: number;
+  };
+}
 
-export const MonthlyStatsCardPart2: React.FC<MonthlyStatsCardProps> = ({
+type MonthlyData = MonthlyStatsCardPart2Props['monthlyDistribution'][0];
+
+export const MonthlyStatsCardPart2: React.FC<MonthlyStatsCardPart2Props> = ({
   username,
   monthlyDistribution,
   mostGamesInDay,
-  favoriteFormat
+  favoriteFormat,
 }) => {
   // Get second 6 months only
   const secondHalf = monthlyDistribution.slice(6, 12);
@@ -18,78 +35,75 @@ export const MonthlyStatsCardPart2: React.FC<MonthlyStatsCardProps> = ({
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  const MonthCard = ({ month, index }: { month: MonthlyData; index: number }) => (
-    month.total > 0 && (
+  const MonthCard = ({ month, index }: { month: MonthlyData, index: number }) => {
+    // Calculate total games for the month
+    const total = month.rapid + month.blitz + month.bullet;
+    
+    return (
       <motion.div
-        key={month.month}
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5, delay: 0.6 + (index * 0.1) }}
-        className="relative bg-black/40 rounded-lg p-2 border border-orange-400/30"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+        className="bg-black/40 rounded-xl p-4 border border-orange-400/30"
       >
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-base font-bold text-orange-300">{month.month}</span>
-          <span className="text-sm font-black text-white">{month.total}</span>
+        <div className="text-center mb-3">
+          <div className="text-sm font-medium text-orange-300">
+            {new Date(2024, month.month - 1).toLocaleString('default', { month: 'long' })}
+          </div>
+          <div className="text-2xl font-black text-white">
+            {total}
+          </div>
+          <div className="text-xs text-white/60">Games</div>
         </div>
-        <div className="space-y-1.5">
-          {/* Rapid */}
+
+        {/* Format distribution */}
+        <div className="space-y-2">
           {month.rapid > 0 && (
-            <div className="relative">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span className="text-xs font-medium text-emerald-300">Rapid</span>
-                <span className="text-xs font-bold text-emerald-300 ml-auto">{month.rapid}</span>
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-white/80">Rapid</span>
+                <span className="text-white/60">{((month.rapid / total) * 100).toFixed(1)}%</span>
               </div>
               <div className="h-1.5 bg-black/50 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(month.rapid / month.total) * 100}%` }}
-                  transition={{ duration: 1, delay: 0.8 }}
-                  className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400"
+                <div
+                  className="h-full bg-emerald-500 rounded-full"
+                  style={{ width: `${(month.rapid / total) * 100}%` }}
                 />
               </div>
             </div>
           )}
-          {/* Blitz */}
           {month.blitz > 0 && (
-            <div className="relative">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-                <span className="text-xs font-medium text-purple-300">Blitz</span>
-                <span className="text-xs font-bold text-purple-300 ml-auto">{month.blitz}</span>
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-white/80">Blitz</span>
+                <span className="text-white/60">{((month.blitz / total) * 100).toFixed(1)}%</span>
               </div>
               <div className="h-1.5 bg-black/50 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(month.blitz / month.total) * 100}%` }}
-                  transition={{ duration: 1, delay: 0.8 }}
-                  className="h-full bg-gradient-to-r from-purple-600 to-purple-400"
+                <div
+                  className="h-full bg-purple-500 rounded-full"
+                  style={{ width: `${(month.blitz / total) * 100}%` }}
                 />
               </div>
             </div>
           )}
-          {/* Bullet */}
           {month.bullet > 0 && (
-            <div className="relative">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-pink-400" />
-                <span className="text-xs font-medium text-pink-300">Bullet</span>
-                <span className="text-xs font-bold text-pink-300 ml-auto">{month.bullet}</span>
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-white/80">Bullet</span>
+                <span className="text-white/60">{((month.bullet / total) * 100).toFixed(1)}%</span>
               </div>
               <div className="h-1.5 bg-black/50 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(month.bullet / month.total) * 100}%` }}
-                  transition={{ duration: 1, delay: 0.8 }}
-                  className="h-full bg-gradient-to-r from-pink-600 to-pink-400"
+                <div
+                  className="h-full bg-rose-500 rounded-full"
+                  style={{ width: `${(month.bullet / total) * 100}%` }}
                 />
               </div>
             </div>
           )}
         </div>
       </motion.div>
-    )
-  );
+    );
+  };
 
   return (
     <div className="w-full max-w-lg mx-auto relative z-50 pt-8 sm:pt-0">
@@ -137,16 +151,16 @@ export const MonthlyStatsCardPart2: React.FC<MonthlyStatsCardProps> = ({
               </div>
             )}
             {/* Favorite Format */}
-            {favoriteFormat && (
+            {favoriteFormat && favoriteFormat.type && (
               <div className="text-center">
                 <div className="text-4xl sm:text-5xl font-black text-white mb-1 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
-                  {favoriteFormat.winRate}%
+                  {favoriteFormat.count}
                 </div>
                 <div className="text-base font-bold text-white/90">
-                  {favoriteFormat.format.charAt(0).toUpperCase() + favoriteFormat.format.slice(1)} Win Rate
+                  {favoriteFormat.type.charAt(0).toUpperCase() + favoriteFormat.type.slice(1)}
                 </div>
                 <div className="text-xs text-white/80">
-                  {favoriteFormat.gamesPlayed} games
+                  {favoriteFormat.count} games
                 </div>
               </div>
             )}

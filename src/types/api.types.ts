@@ -352,56 +352,49 @@ export interface ChessWrapped {
 export interface ChessWrappedResponse {
   intro: {
     totalGames: number;
-    formatBreakdown: {
-      rapid: { count: number; percentage: number };
-      blitz: { count: number; percentage: number };
-      bullet: { count: number; percentage: number };
-    };
     longestStreak: {
+      start: string;
+      end: string;
       days: number;
-      startDate: string;
-      endDate: string;
     };
     longestBreak: {
+      start: string;
+      end: string;
       days: number;
-      startDate: string;
-      endDate: string;
     };
     mostGamesInDay: {
       date: string;
       count: number;
     };
     favoriteFormat: {
-      format: string;
-      gamesPlayed: number;
-      winRate: number;
+      type: 'rapid' | 'blitz' | 'bullet';
+      count: number;
+    };
+    formatBreakdown: {
+      rapid: {
+        count: number;
+        percentage: number;
+      };
+      blitz: {
+        count: number;
+        percentage: number;
+      };
+      bullet: {
+        count: number;
+        percentage: number;
+      };
     };
   };
   monthlyGames: {
     distribution: Array<{
-      month: string;
+      month: number;
       rapid: number;
       blitz: number;
       bullet: number;
-      total: number;
     }>;
   };
-  ratingHistory: {
-    rapid: Array<{
-      date: string;
-      rating: number;
-    }>;
-    blitz: Array<{
-      date: string;
-      rating: number;
-    }>;
-    bullet: Array<{
-      date: string;
-      rating: number;
-    }>;
-  };
-  formatStats: {
-    rapid: {
+  formatStats?: {
+    rapid?: {
       results: {
         wins: number;
         draws: number;
@@ -420,7 +413,7 @@ export interface ChessWrappedResponse {
         date: string;
       };
     };
-    blitz: {
+    blitz?: {
       results: {
         wins: number;
         draws: number;
@@ -439,7 +432,7 @@ export interface ChessWrappedResponse {
         date: string;
       };
     };
-    bullet: {
+    bullet?: {
       results: {
         wins: number;
         draws: number;
@@ -459,16 +452,29 @@ export interface ChessWrappedResponse {
       };
     };
   };
-  performance: {
-    accuracy: {
-      overall: number | null;
-      byFormat: {
-        rapid: number | null;
-        blitz: number | null;
-        bullet: number | null;
+  performance?: {
+    accuracy?: {
+      byFormat?: {
+        rapid?: number | null;
+        blitz?: number | null;
+        bullet?: number | null;
       };
     };
   };
-}
+  ratingProgress?: {
+    rapid?: Array<{
+      date: string;
+      rating: number;
+    }>;
+    blitz?: Array<{
+      date: string;
+      rating: number;
+    }>;
+    bullet?: Array<{
+      date: string;
+      rating: number;
+    }>;
+  };
+};
 
 export type ChessUserResponse = ApiResponse<UserProfile>; 

@@ -276,6 +276,15 @@ const captureStyles = `
   }
 `;
 
+interface RatingProgressEntry {
+  date: string;
+  rating: number;
+}
+
+// Calculate minimum loading duration based on loading states
+const LOADING_STATE_DURATION = 2000; // 2 seconds per state
+const MIN_LOADING_DURATION = loadingStates.length * LOADING_STATE_DURATION;
+
 export const ChessWrappedStory = ({ 
   playerData,
   wrappedData: initialWrappedData 
@@ -288,25 +297,40 @@ export const ChessWrappedStory = ({
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [storyComplete, setStoryComplete] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const loadStartTime = useRef(Date.now());
 
   // Load wrapped data only if not provided
   useEffect(() => {
     const loadWrappedData = async () => {
       if (initialWrappedData) {
-        setLoading(false);
+        // Even with initial data, ensure minimum loading time
+        const timeElapsed = Date.now() - loadStartTime.current;
+        const remainingTime = Math.max(0, MIN_LOADING_DURATION - timeElapsed);
+        
+        setTimeout(() => {
+          setLoading(false);
+        }, remainingTime);
         return;
       }
 
       try {
         const response = await ChessService.getWrapped(playerData.username);
         setWrappedData(response);
-        setLoading(false);
+        
+        // Calculate remaining time to meet minimum duration
+        const timeElapsed = Date.now() - loadStartTime.current;
+        const remainingTime = Math.max(0, MIN_LOADING_DURATION - timeElapsed);
+        
+        setTimeout(() => {
+          setLoading(false);
+        }, remainingTime);
       } catch (err) {
         console.error('Failed to load wrapped data:', err);
         setLoading(false);
       }
     };
 
+    loadStartTime.current = Date.now(); // Reset load start time
     loadWrappedData();
   }, [initialWrappedData, playerData.username]);
 
@@ -382,15 +406,6 @@ export const ChessWrappedStory = ({
       setCurrentCardIndex(prev => prev - 1);
     }
   };
-
-  useEffect(() => {
-    // Only keep the loading timeout
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, loadingStates.length * 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -553,37 +568,42 @@ export const ChessWrappedStory = ({
       return rating !== null && (formatGames >= 15 || (formatGames / totalGames) * 100 >= 10);
     };
 
-    // Create mock data for format stats until API is updated
-    const mockFormatStats = (format: 'rapid' | 'blitz' | 'bullet') => ({
+    // Get rating history for a specific format
+    const getRatingHistory = (format: 'rapid' | 'blitz' | 'bullet') => {
+      const ratingProgress = wrappedData.ratingProgress?.[format] || [];
+      return ratingProgress.map((entry: RatingProgressEntry) => ({
+        date: entry.date,
+        rating: entry.rating
+      }));
+    };
+
+    // Get current rating for a format
+    const getCurrentRating = (format: 'rapid' | 'blitz' | 'bullet'): number => {
+      const rating = playerData.ratings?.[format];
+      return rating || 0;
+    };
+
+
+
+    // Default format stats
+    const defaultFormatStats = {
       results: {
-        wins: wrappedData.intro.formatBreakdown[format].count * 0.5,
-        draws: wrappedData.intro.formatBreakdown[format].count * 0.1,
-        losses: wrappedData.intro.formatBreakdown[format].count * 0.3,
-        timeouts: wrappedData.intro.formatBreakdown[format].count * 0.05,
-        abandoned: wrappedData.intro.formatBreakdown[format].count * 0.05,
+        wins: 0,
+        draws: 0,
+        losses: 0,
+        timeouts: 0,
+        abandoned: 0
       },
       bestWin: {
-        opponentName: "Player1",
-        opponentRating: 1500,
-        date: "2024-01-15",
+        opponentName: "Unknown",
+        opponentRating: 0,
+        date: new Date().toISOString()
       },
       worstLoss: {
-        opponentName: "Player2",
-        opponentRating: 1200,
-        date: "2024-02-01",
+        opponentName: "Unknown",
+        opponentRating: 0,
+        date: new Date().toISOString()
       }
-    });
-
-    // Create mock rating history until API is updated
-    const mockRatingHistory = (rating: number) => {
-      const history = [];
-      for (let i = 0; i < 12; i++) {
-        history.push({
-          date: `2024-${String(i + 1).padStart(2, '0')}-01`,
-          rating: rating + Math.floor(Math.random() * 200 - 100)
-        });
-      }
-      return history;
     };
 
     switch (card.id) {
@@ -609,91 +629,103 @@ export const ChessWrappedStory = ({
           <MonthlyStatsCardPart2
             username={playerData.username}
             monthlyDistribution={wrappedData.monthlyGames.distribution}
-            longestStreak={wrappedData.intro.longestStreak}
-            longestBreak={wrappedData.intro.longestBreak}
             mostGamesInDay={wrappedData.intro.mostGamesInDay}
             favoriteFormat={wrappedData.intro.favoriteFormat}
           />
         );
-      case "rapid-stats-1":
-        if (shouldShowFormat(wrappedData.intro.formatBreakdown.rapid.count, playerData.ratings.rapid)) {
+      case "rapid-stats-1": {
+        const rating = getCurrentRating('rapid');
+        if (shouldShowFormat(wrappedData.intro.formatBreakdown.rapid.count, rating)) {
           return (
             <FormatStatsCard
               username={playerData.username}
               format="rapid"
-              currentRating={playerData.ratings.rapid!}
-              ratingHistory={mockRatingHistory(playerData.ratings.rapid!)}
+              currentRating={rating}
+              ratingHistory={getRatingHistory('rapid')}
             />
           );
         }
         return null;
-      case "rapid-stats-2":
-        if (shouldShowFormat(wrappedData.intro.formatBreakdown.rapid.count, playerData.ratings.rapid)) {
+      }
+      case "rapid-stats-2": {
+        const rating = getCurrentRating('rapid');
+        if (shouldShowFormat(wrappedData.intro.formatBreakdown.rapid.count, rating)) {
+          const stats = wrappedData.formatStats?.rapid || defaultFormatStats;
           return (
             <FormatStatsCardPart2
               username={playerData.username}
               format="rapid"
-              results={mockFormatStats('rapid').results}
-              bestWin={mockFormatStats('rapid').bestWin}
-              worstLoss={mockFormatStats('rapid').worstLoss}
+              results={stats.results}
+              bestWin={stats.bestWin}
+              worstLoss={stats.worstLoss}
               accuracy={wrappedData.performance?.accuracy?.byFormat?.rapid ?? null}
             />
           );
         }
         return null;
-      case "blitz-stats-1":
-        if (shouldShowFormat(wrappedData.intro.formatBreakdown.blitz.count, playerData.ratings.blitz)) {
+      }
+      case "blitz-stats-1": {
+        const rating = getCurrentRating('blitz');
+        if (shouldShowFormat(wrappedData.intro.formatBreakdown.blitz.count, rating)) {
           return (
             <FormatStatsCard
               username={playerData.username}
               format="blitz"
-              currentRating={playerData.ratings.blitz!}
-              ratingHistory={mockRatingHistory(playerData.ratings.blitz!)}
+              currentRating={rating}
+              ratingHistory={getRatingHistory('blitz')}
             />
           );
         }
         return null;
-      case "blitz-stats-2":
-        if (shouldShowFormat(wrappedData.intro.formatBreakdown.blitz.count, playerData.ratings.blitz)) {
+      }
+      case "blitz-stats-2": {
+        const rating = getCurrentRating('blitz');
+        if (shouldShowFormat(wrappedData.intro.formatBreakdown.blitz.count, rating)) {
+          const stats = wrappedData.formatStats?.blitz || defaultFormatStats;
           return (
             <FormatStatsCardPart2
               username={playerData.username}
               format="blitz"
-              results={mockFormatStats('blitz').results}
-              bestWin={mockFormatStats('blitz').bestWin}
-              worstLoss={mockFormatStats('blitz').worstLoss}
+              results={stats.results}
+              bestWin={stats.bestWin}
+              worstLoss={stats.worstLoss}
               accuracy={wrappedData.performance?.accuracy?.byFormat?.blitz ?? null}
             />
           );
         }
         return null;
-      case "bullet-stats-1":
-        if (shouldShowFormat(wrappedData.intro.formatBreakdown.bullet.count, playerData.ratings.bullet)) {
+      }
+      case "bullet-stats-1": {
+        const rating = getCurrentRating('bullet');
+        if (shouldShowFormat(wrappedData.intro.formatBreakdown.bullet.count, rating)) {
           return (
             <FormatStatsCard
               username={playerData.username}
               format="bullet"
-              currentRating={playerData.ratings.bullet!}
-              ratingHistory={mockRatingHistory(playerData.ratings.bullet!)}
+              currentRating={rating}
+              ratingHistory={getRatingHistory('bullet')}
             />
           );
         }
         return null;
-      case "bullet-stats-2":
-        if (shouldShowFormat(wrappedData.intro.formatBreakdown.bullet.count, playerData.ratings.bullet)) {
+      }
+      case "bullet-stats-2": {
+        const rating = getCurrentRating('bullet');
+        if (shouldShowFormat(wrappedData.intro.formatBreakdown.bullet.count, rating)) {
+          const stats = wrappedData.formatStats?.bullet || defaultFormatStats;
           return (
             <FormatStatsCardPart2
               username={playerData.username}
               format="bullet"
-              results={mockFormatStats('bullet').results}
-              bestWin={mockFormatStats('bullet').bestWin}
-              worstLoss={mockFormatStats('bullet').worstLoss}
+              results={stats.results}
+              bestWin={stats.bestWin}
+              worstLoss={stats.worstLoss}
               accuracy={wrappedData.performance?.accuracy?.byFormat?.bullet ?? null}
             />
           );
         }
         return null;
-      // Add other cases for different cards
+      }
       default:
         return (
           <div className="text-center mb-8">
